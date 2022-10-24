@@ -1,12 +1,6 @@
 const { uniqueFromArray, groupBy, incrCellInfo } = require('./src');
 const channels = require('./channels.json');
 
-const convertor = {
-    "3": "2G1800",
-    "5": "2G900"
-}
-
-
 const formatData = (table = [], channels) => {
     if (!table.length) return {
         vecini: null,

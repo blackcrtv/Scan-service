@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/blackcrtv/Scan-service/issues"
   },
-  "homepage": "https://github.com/blackcrtv/Scan-service#readme"
+  "homepage": "https://github.com/blackcrtv/Scan-service#readme",
+  "dependencies": {
+    "amqplib": "^0.10.3"
+  }
 }

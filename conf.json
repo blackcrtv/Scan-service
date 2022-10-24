@@ -1,5 +1,14 @@
 {
-    "RECOMANDARI":{
+    "RECOMANDARI": {
         "N": 2417
+    },
+    "RABBIT": {
+        "IP": "amqp://admin:admin@172.17.120.68",
+        "USER": "admin",
+        "PASS": "admin",
+        "QUE_SCAN": "SCAN_2G"
+    },
+    "ES": {
+        "IP": "http://localhost:9200"
     }
 }
