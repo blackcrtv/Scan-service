@@ -22,7 +22,7 @@ const consumeQue = (channel, defaultQue = RABBIT.QUE_SCAN) => {
         channel.consume(defaultQue, function (msg) {
             if (msg !== null) {
                 console.log('Recieved:', msg.content.toString());
-                fs.appendFile('server/data.txt', msg.content.toString() + "\n", function (err) {
+                fs.appendFile('server/dataGSM.txt', msg.content.toString() + "\n", function (err) {
                     if (err) throw err;
                     console.log('Saved!');
                 });

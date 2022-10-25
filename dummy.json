@@ -1,143 +1,216 @@
 [
     {
         "system_info": {
-            "arfcn_neighbors": [
-                975,
-                977,
-                979,
-                982,
-                984,
-                986,
-                987,
-                988,
-                989,
-                990,
-                991,
-                995,
-                996,
-                997,
-                1001,
-                1003
-            ],
-            "snr": 6.3984375,
-            "bcc": 5,
-            "ncc": 0,
-            "plmn": {
-                "mnc_length": 2,
-                "mcc_length": 3,
-                "mcc": [
-                    2,
-                    2,
-                    6
-                ],
-                "mnc": [
-                    0,
-                    1,
-                    15
+            "phy_cell_id": 100,
+            "rsrp": -92.7,
+            "sib1": {
+                "l3cell_id": 28339734,
+                "tac": 700,
+                "freq_band_indicator": 1,
+                "plmn": [
+                    {
+                        "mnc_length": 2,
+                        "mcc_length": 3,
+                        "mcc": [
+                            2,
+                            2,
+                            6
+                        ],
+                        "mnc": [
+                            0,
+                            5
+                        ]
+                    }
                 ]
             },
-            "t3212": [
-                40
-            ],
-            "band": 5,
-            "arfcn": 1018,
-            "lac": 22230,
-            "rssi": -84.00390625,
-            "cell_id": 11052
+            "rsrq": -12.76,
+            "sib4": {
+                "no_of_intra_freq_neighbors": 13,
+                "intra_freq_cells": [
+                    {
+                        "intraFreqNeighborCellPci": 35
+                    },
+                    {
+                        "intraFreqNeighborCellPci": 36
+                    },
+                    {
+                        "intraFreqNeighborCellPci": 37
+                    },
+                    {
+                        "intraFreqNeighborCellPci": 38
+                    },
+                    {
+                        "intraFreqNeighborCellPci": 204
+                    },
+                    {
+                        "intraFreqNeighborCellPci": 59
+                    },
+                    {
+                        "intraFreqNeighborCellPci": 101
+                    },
+                    {
+                        "intraFreqNeighborCellPci": 99
+                    },
+                    {
+                        "intraFreqNeighborCellPci": 445
+                    },
+                    {
+                        "intraFreqNeighborCellPci": 24
+                    },
+                    {
+                        "intraFreqNeighborCellPci": 214
+                    },
+                    {
+                        "intraFreqNeighborCellPci": 444
+                    },
+                    {
+                        "intraFreqNeighborCellPci": 464
+                    }
+                ]
+            },
+            "sib5": {
+                "inter_freq_cells": [
+                    {
+                        "interFreqNeighborCellPci": 60
+                    },
+                    {
+                        "interFreqNeighborCellPci": 62
+                    },
+                    {
+                        "interFreqNeighborCellPci": 61
+                    },
+                    {
+                        "interFreqNeighborCellPci": 32
+                    },
+                    {
+                        "interFreqNeighborCellPci": 151
+                    },
+                    {
+                        "interFreqNeighborCellPci": 178
+                    },
+                    {
+                        "interFreqNeighborCellPci": 443
+                    },
+                    {
+                        "interFreqNeighborCellPci": 177
+                    },
+                    {
+                        "interFreqNeighborCellPci": 179
+                    },
+                    {
+                        "interFreqNeighborCellPci": 483
+                    },
+                    {
+                        "interFreqNeighborCellPci": 61
+                    }
+                ]
+            },
+            "earfcn": 78
         }
     },
     {
         "system_info": {
-            "arfcn_neighbors": [
-                975,
-                977,
-                979,
-                982,
-                984,
-                986,
-                987,
-                988,
-                989,
-                990,
-                991,
-                995,
-                996,
-                997,
-                1001,
-                1003
-            ],
-            "snr": 6.3984375,
-            "bcc": 5,
-            "ncc": 0,
-            "plmn": {
-                "mnc_length": 2,
-                "mcc_length": 3,
-                "mcc": [
-                    2,
-                    2,
-                    6
-                ],
-                "mnc": [
-                    0,
-                    1,
-                    15
+            "phy_cell_id": 358,
+            "rsrp": -83.61,
+            "sib1": {
+                "l3cell_id": 2987778,
+                "tac": 10102,
+                "freq_band_indicator": 3,
+                "plmn": [
+                    {
+                        "mnc_length": 2,
+                        "mcc_length": 3,
+                        "mcc": [
+                            2,
+                            2,
+                            6
+                        ],
+                        "mnc": [
+                            1,
+                            0
+                        ]
+                    }
                 ]
             },
-            "t3212": [
-                40
-            ],
-            "band": 5,
-            "arfcn": 1018,
-            "lac": 22230,
-            "rssi": -84.00390625,
-            "cell_id": 11052
+            "rsrq": -12.87,
+            "sib4": {
+                "no_of_intra_freq_neighbors": 0,
+                "intra_freq_cells": []
+            },
+            "sib5": {
+                "inter_freq_cells": []
+            },
+            "earfcn": 1600
         }
     },
     {
         "system_info": {
-            "arfcn_neighbors": [
-                975,
-                977,
-                979,
-                982,
-                984,
-                986,
-                987,
-                988,
-                989,
-                990,
-                991,
-                995,
-                996,
-                997,
-                1001,
-                1003
-            ],
-            "snr": 6.3984375,
-            "bcc": 5,
-            "ncc": 0,
-            "plmn": {
-                "mnc_length": 2,
-                "mcc_length": 3,
-                "mcc": [
-                    2,
-                    2,
-                    6
-                ],
-                "mnc": [
-                    0,
-                    1,
-                    15
+            "phy_cell_id": 357,
+            "rsrp": -64.14,
+            "sib1": {
+                "l3cell_id": 2987785,
+                "tac": 10102,
+                "freq_band_indicator": 20,
+                "plmn": [
+                    {
+                        "mnc_length": 2,
+                        "mcc_length": 3,
+                        "mcc": [
+                            2,
+                            2,
+                            6
+                        ],
+                        "mnc": [
+                            1,
+                            0
+                        ]
+                    }
                 ]
             },
-            "t3212": [
-                40
-            ],
-            "band": 5,
-            "arfcn": 1018,
-            "lac": 22230,
-            "rssi": -84.00390625,
-            "cell_id": 11052
+            "rsrq": -10.78,
+            "sib4": {
+                "no_of_intra_freq_neighbors": 0,
+                "intra_freq_cells": []
+            },
+            "sib5": {
+                "inter_freq_cells": []
+            },
+            "earfcn": 6350
+        }
+    },
+    {
+        "system_info": {
+            "phy_cell_id": 467,
+            "rsrp": -93.28,
+            "sib1": {
+                "l3cell_id": 100867,
+                "tac": 47021,
+                "freq_band_indicator": 3,
+                "plmn": [
+                    {
+                        "mnc_length": 2,
+                        "mcc_length": 3,
+                        "mcc": [
+                            2,
+                            2,
+                            6
+                        ],
+                        "mnc": [
+                            0,
+                            3
+                        ]
+                    }
+                ]
+            },
+            "rsrq": -14.86,
+            "sib4": {
+                "no_of_intra_freq_neighbors": 0,
+                "intra_freq_cells": []
+            },
+            "sib5": {
+                "inter_freq_cells": []
+            },
+            "earfcn": 1798
         }
     }
 ]

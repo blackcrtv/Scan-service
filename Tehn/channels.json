@@ -3871,7 +3871,7 @@
             1023
         ],
         "band_real": 8,
-        "band_placuta": 5
+        "band_placuta": 10
     },
     "2G1800": {
         "channels": [
@@ -4251,6 +4251,6 @@
             885
         ],
         "band_real": 3,
-        "band_placuta": 3
+        "band_placuta": 13
     }
 }

@@ -6,7 +6,7 @@ const formatData = (table = [], channels) => {
 
   let list_ch = [];
   list_ch = table.map((elem, id) => {
-    let to_work = elem._source.system_info;
+    let to_work = elem.system_info;
     let mnc = to_work.plmn[0].mnc
       .join("")
       .slice(0, to_work.plmn[0].mnc_length || 2);
@@ -20,17 +20,17 @@ const formatData = (table = [], channels) => {
       cell_id: to_work.cell_info[0].network_cell_id,
       mnc: mnc,
       mcc: mcc,
-      rac: elem._source.system_info.rac,
-      psc: elem._source.system_info.cell_info[0].psc,
-      t3212: elem._source.system_info.t3212,
-      lac: elem._source.system_info.lac,
+      rac: to_work.rac,
+      psc: to_work.cell_info[0].psc,
+      t3212: to_work.t3212,
+      lac: to_work.lac,
       rnc_id: 0, // rnc_id de schimbat
       intra: [],
       inter: [],
-      timestamp: table[0]._source["@timestamp"],
+      timestamp: table[0]._source?.["@timestamp"],
       id: elem._id,
       mcc_mnc: `${mcc}-${mnc}`,
-      markImport: elem._source.marker ?? false,
+      markImport: elem._source?.marker ?? false,
     };
     let tmp_intra = to_work.cell_info[0].intra_freq_cell_list.filter((cell) => {
       if (cell.cell_id != -1) return cell;
@@ -52,15 +52,16 @@ const formatData = (table = [], channels) => {
 };
 
 const sanitErrorScan = (cell, table) => {
+
   if (cell.lac != -1) return cell;
   let filterCanal = table.filter(
-    (elem) => elem._source.system_info.uarfcn == cell.uarfcn
+    (elem) => elem.system_info.uarfcn == cell.uarfcn
   );
-  if (!filterCanal.every((elem) => elem._source.system_info.lac == -1))
+  if (!filterCanal.every((elem) => elem.system_info.lac == -1))
     return cell;
 
   let pscToExclude = filterCanal.map((elem) => {
-    return elem._source.system_info.cell_info[0].psc;
+    return elem.system_info.cell_info[0].psc;
   });
 
   let pscToComplete = [506, 507, 508, 509, 510, 511];

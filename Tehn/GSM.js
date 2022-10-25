@@ -1,5 +1,6 @@
 const { uniqueFromArray, groupBy, incrCellInfo } = require("./src");
 const channels = require("./channels.json");
+const { RECOMANDARI } = require('../conf.json');
 
 const formatData = (table = [], channels) => {
   if (!table.length)
@@ -7,8 +8,10 @@ const formatData = (table = [], channels) => {
       vecini: null,
       serv: null,
     };
-  ch_group = { 5: channels["2G900"].channels, 3: channels["2G1800"].channels };
+  ch_group = { [RECOMANDARI.canaleMapare["2G900"]]: channels["2G900"].channels, [RECOMANDARI.canaleMapare["2G1800"]]: channels["2G1800"].channels };
   // gasire serving
+  console.log(ch_group);
+
   let servings = {}; // putere, canal, vecini, key = operator
 
   let filteredData = table.map((el, i) => {

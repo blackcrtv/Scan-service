@@ -1,14 +1,36 @@
 {
     "RECOMANDARI": {
-        "N": 2417
+        "N": 2417,
+        "canaleMapare":{
+            "2G900": 10,
+            "2G1800": 13,
+            "3G900": 1,
+            "3G2100": 8,
+            "4G800": 1,
+            "4G900": 3,
+            "4G1800": 7,
+            "4G2100": 8,
+            "4G2600": 20,
+            "4G2600 TDD": 38
+        }
     },
     "RABBIT": {
         "IP": "amqp://admin:admin@172.17.120.68",
         "USER": "admin",
         "PASS": "admin",
-        "QUE_SCAN": "SCAN_2G"
+        "QUE_SCAN": "SCAN_4G"
     },
     "ES": {
-        "IP": "http://localhost:9200"
+        "IP": "http://172.17.120.119:9200",
+        "INDEX_RECOMANDARI": "index_recomandari",
+        "INDEX_GSM": "index_scan_2g_beta",
+        "INDEX_UMTS": "index_scan_3g_beta",
+        "INDEX_LTE": "index_scan_4g_beta"
+    },
+    "MYSQL": {
+        "host": "172.17.120.122",
+        "user": "root",
+        "password": "123456789",
+        "database": "catbox"
     }
 }

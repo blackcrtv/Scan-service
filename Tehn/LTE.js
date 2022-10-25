@@ -1,18 +1,18 @@
 const { uniqueFromArray, groupBy, incrCellInfo } = require("./src");
 const channels = require("./channels.json");
 const grps = {
-    Gr1: [0, 125],
-    Gr2: [126, 251],
-    Gr3: [252, 377],
-    Gr4: [378, 503],
-  };
+  Gr1: [0, 125],
+  Gr2: [126, 251],
+  Gr3: [252, 377],
+  Gr4: [378, 503],
+};
 
 const formatData = (table = []) => {
   if (!table.length) return null;
 
   let list_ch = [];
   list_ch = table.map((elem, id) => {
-    let to_work = elem._source.system_info;
+    let to_work = elem.system_info;
     let mcc = to_work.sib1.plmn[0].mcc.join("");
     let mnc = to_work.sib1.plmn[0].mnc
       .join("")
@@ -37,10 +37,10 @@ const formatData = (table = []) => {
       mnc: mnc,
       mcc: mcc,
       tac: to_work.sib1.tac,
-      timestamp: table[0]._source["@timestamp"],
+      timestamp: table[0]._source?.["@timestamp"],
       mcc_mnc: `${mcc}-${mnc}`,
       mcc_mnc_canal: `${mcc}-${mnc}-${earfcn}`,
-      markImport: elem._source.marker ?? false,
+      markImport: elem._source?.marker ?? false,
     };
     return obj;
   });
@@ -218,21 +218,15 @@ const setRecLTE = (elem_list = []) => {
         .splice(0, 2);
     }
 
-    let tac_serv = obj_operator[canal].serving_cell.tac;
-    let l3_cell_id_serv = obj_operator[canal].serving_cell.l3cellid;
-
     obj_operator[canal] = {
       ...obj_operator[canal],
       scor,
       recomandare: {
-        tac: incrCellInfo(obj_operator[canal].tac_op, tac_serv, "tac", 3, 1)
+        tac: incrCellInfo(obj_operator[canal].tac_op, "tac")
           .new_lac,
         l3cellid: incrCellInfo(
           obj_operator[canal].l3cell_op,
-          l3_cell_id_serv,
-          "l3cell_id",
-          3,
-          1
+          "l3cell_id"
         ),
         ord_pci: ordPci(obj_operator[canal].serving_cell.pci),
         scor_grupat: filt_grupe,
@@ -263,9 +257,9 @@ const ordPci = (pci) => {
 };
 
 const getRecomandare4G = (data_4G = []) => {
-    if (!data_4G.length) return {}
-    let group_list = formatData(data_4G);
-    return setRecLTE(group_list);
+  if (!data_4G.length) return {}
+  let group_list = formatData(data_4G);
+  return setRecLTE(group_list);
 }
 
 module.exports.getRecomandare4G = getRecomandare4G;

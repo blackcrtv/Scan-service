@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/blackcrtv/Scan-service#readme",
   "dependencies": {
-    "amqplib": "^0.10.3"
+    "amqplib": "^0.10.3",
+    "es7": "npm:@elastic/elasticsearch@^7.17.0",
+    "mysql": "^2.18.1"
   }
 }

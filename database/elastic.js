@@ -1,8 +1,6 @@
 const { Client: Client7 } = require('es7')
-const config = require('./conf.json')
+const { ES } = require('../conf.json')
 
-
-let url = config.ES.IP;
 
 /**
  *  Utilizat pentru import in Elasticsearch
@@ -11,7 +9,7 @@ let url = config.ES.IP;
  */
 const insertElastic = async (_index, _data) => {
     try {
-        const client = new Client7({ node: url })
+        const client = new Client7({ node: ES.IP })
 
         return await client.index({
             index: _index,
@@ -19,7 +17,7 @@ const insertElastic = async (_index, _data) => {
         });
     } catch (error) {
         console.log(error)
-        return false;
+        return null;
     }
 
 }
@@ -27,7 +25,7 @@ module.exports.insertElastic = insertElastic;
 
 const searchElastic = async (search, index_dest) => {
     try {
-        const client = new Client7({ node: url })
+        const client = new Client7({ node: ES.IP })
         let { body } = await client.search({
             index: index_dest,
             body: search
@@ -36,7 +34,7 @@ const searchElastic = async (search, index_dest) => {
         return body;
     } catch (error) {
         console.log(error)
-        return false;
+        return null;
     }
 
 }
