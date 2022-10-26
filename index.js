@@ -56,7 +56,9 @@ const getElasticData = async (index = ES.INDEX_GSM, date = "2022-10-25T13:05:03.
         };
         return await searchElastic(queryBody, index);
     } catch (error) {
-        console.log(error)
+        fs.appendFile(errorLogFile, error.toString() + "\n", function (err) {
+            if (err) return console.log('Nu se poate scrie in fisier \n');
+        });
         return false;
     }
 };
