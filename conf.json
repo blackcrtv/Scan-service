@@ -36,5 +36,5 @@
     },
     "errorLogFile": "Logs/errorLog.txt",
     "logFile": "Logs/log.txt",
-    "INTERVAL_SERVICE": 5000
+    "INTERVAL_SERVICE": 15000
 }

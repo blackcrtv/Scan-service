@@ -79,7 +79,7 @@ const getLastDateElastic = async (index = ES.INDEX_ALL_SCAN) => {
 
     } catch (error) {
         console.log(error);
-        return false;
+        return [];
     }
 };
 
