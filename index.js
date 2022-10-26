@@ -2,10 +2,10 @@ const { getAllRecomand } = require("./Tehn/allTehn");
 const { setConnection, sendQuery } = require("./database/mysql");
 const { searchElastic, insertElastic } = require("./database/elastic");
 const { ES, errorLogFile, logFile, INTERVAL_SERVICE } = require('./conf.json');
-const fs = require('fs');
+const { insertLog } = require('./Logs/formatLogs');
 
 /**
- *
+ *Se verifica conexiunea la baza de date si se executa selectul pentru starea receptorului
  * @returns Array[{ command_type:"", status: int }]
  */
 const checkDB = async () => {
@@ -62,9 +62,7 @@ const getElasticData = async (index = ES.INDEX_GSM, date = "2022-10-25T13:05:03.
         };
         return await searchElastic(queryBody, index);
     } catch (error) {
-        fs.appendFile(errorLogFile, error.toString() + "\n", function (err) {
-            if (err) return console.log('Nu se poate scrie in fisier \n');
-        });
+        insertLog(error, errorLogFile);
         return false;
     }
 };
@@ -138,7 +136,7 @@ const main = async () => {
         //4. Inserare in ES cu update sau insert
         let insertResponse = await Promise.all(sourceRecomand.map(async (data) => {
             try {
-                return await insertElastic(ES.INDEX_RECOMANDARI, data)
+                return await insertElastic(ES.INDEX_RECOMANDARI, data);
             } catch (error) {
                 return false
             }
@@ -154,26 +152,15 @@ const main = async () => {
             errorStatus: -1
         };
     } catch (error) {
-        let errStr = '';
-        if (typeof error === 'object') {
-            errStr = JSON.stringify(error);
-        } else {
-            errStr = error.toString();
-        }
-        fs.appendFile(errorLogFile, errStr + "\n", function (err) {
-            if (err) return console.log('Nu se poate scrie in fisier \n');
-        });
+        insertLog(error, errorLogFile);
         throw error;
     }
 }
 
 let intervalMain = setInterval(async () => {
-
     try {
         let resultStatus = await main();
-        fs.appendFile(logFile, JSON.stringify(resultStatus) + "\n", function (err) {
-            if (err) return console.log('Nu se poate scrie in fisier \n');
-        });
+        insertLog(resultStatus, logFile);
     } catch (error) {
         console.log(error);
     }

@@ -43,3 +43,29 @@ const searchElastic = async (search, index_dest) => {
 
 }
 module.exports.searchElastic = searchElastic;
+
+/**
+ * Inserare in elastic cu _id configurat ce trebuie sa se regaseasca in obiect
+ * @param {string} _index 
+ * @param {object} _data format query elastic
+ * @returns 
+ */
+const insertElasticWithId = async (_index, _data) => {
+    try {
+        const client = new Client7({ node: ES.IP })
+
+        return await client.index({
+            index: _index,
+            body: _data
+        });
+    } catch (error) {
+        console.log(error)
+        return {
+            err: true,
+            errMsg: error,
+            data: _data
+        };
+    }
+
+}
+module.exports.insertElastic = insertElastic;
