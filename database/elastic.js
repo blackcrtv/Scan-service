@@ -70,3 +70,58 @@ const insertElasticWithId = async (_index, _data) => {
 
 }
 module.exports.insertElasticWithId = insertElasticWithId;
+
+const getLastDateElastic = async (index = ES.INDEX_ALL_SCAN) => {
+    try {
+        let queryBody = {
+            query: {
+                match_all: {},
+            },
+            size: 1,
+            sort: [
+                {
+                    "@timestamp": { order: "desc" }
+                }
+            ]
+        };
+
+        return await searchElastic(queryBody, index);
+
+    } catch (error) {
+        console.log(error);
+        return [];
+    }
+};
+module.exports.getLastDateElastic = getLastDateElastic;
+
+/**
+ * 
+ * @param {string} index default conf.ES.INDEX_GSM
+ * @param {string} date grater or equal than this date
+ * @returns bucket format hits.hits
+ */
+ const getElasticData = async (index = ES.INDEX_GSM, date = "2022-10-25T13:05:03.611Z") => {
+    try {
+        let queryBody = {
+            query: {
+                bool: {
+                    must: [
+                        {
+                            range: {
+                                "@timestamp": {
+                                    gte: date + "||-1h",
+                                    lte: date
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        };
+        return await searchElastic(queryBody, index);
+    } catch (error) {
+        insertLog(error, errorLogFile);
+        return false;
+    }
+};
+module.exports.getElasticData = getElasticData;

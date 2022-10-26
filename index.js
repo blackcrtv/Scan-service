@@ -1,93 +1,9 @@
 const { getAllRecomand } = require("./Tehn/allTehn");
-const { setConnection, sendQuery } = require("./database/mysql");
-const { searchElastic, insertElastic, insertElasticWithId } = require("./database/elastic");
+const { checkDB } = require("./database/mysql");
+const { getLastDateElastic , insertElasticWithId, getElasticData } = require("./database/elastic");
 const { ES, errorLogFile, logFile, INTERVAL_SERVICE } = require('./conf.json');
 const { insertLog } = require('./Logs/formatLogs');
 
-/**
- *Se verifica conexiunea la baza de date si se executa selectul pentru starea receptorului
- * @returns Array[{ command_type:"", status: int }]
- */
-const checkDB = async () => {
-    try {
-        let { connDB, error: errorDB } = await setConnection();
-        if (errorDB) {
-            return false;
-        }
-        console.log('Db is open...')
-        let cmdState = await sendQuery(
-            connDB,
-            "SELECT command_type, status from catbox.commandrec order by id desc limit 1"
-        );
-
-        if (!cmdState) {
-            return false;
-        }
-        connDB.end(function (err) {
-            if (err) {
-                return console.log('error:' + err.message);
-            }
-            console.log('Close the database connection.');
-        });
-        return cmdState;
-    } catch (error) {
-        console.log("Eroare"); //de gestionat eroare de conexiune cand minipc este inchis
-        return false;
-    }
-};
-
-/**
- * 
- * @param {string} index default conf.ES.INDEX_GSM
- * @param {string} date grater or equal than this date
- * @returns bucket format hits.hits
- */
-const getElasticData = async (index = ES.INDEX_GSM, date = "2022-10-25T13:05:03.611Z") => {
-    try {
-        let queryBody = {
-            query: {
-                bool: {
-                    must: [
-                        {
-                            range: {
-                                "@timestamp": {
-                                    gte: date + "||-1h",
-                                    lte: date
-                                }
-                            }
-                        }
-                    ]
-                }
-            }
-        };
-        return await searchElastic(queryBody, index);
-    } catch (error) {
-        insertLog(error, errorLogFile);
-        return false;
-    }
-};
-
-const getLastDateElastic = async (index = ES.INDEX_ALL_SCAN) => {
-    try {
-        let queryBody = {
-            query: {
-                match_all: {},
-            },
-            size: 1,
-            sort: [
-                {
-                    "@timestamp": { order: "desc" }
-                }
-            ]
-        };
-
-        return await searchElastic(queryBody, index);
-
-    } catch (error) {
-        console.log(error);
-        return [];
-    }
-};
 
 const main = async () => {
     try {
@@ -108,11 +24,11 @@ const main = async () => {
             }
         }
         if (!(flagDB[0].status == 4 && flagDB[0].command_type == 'SCAN')) {
-            // return {
-            //     error: false,
-            //     msg: 'Receptorul nu se afla in scan activ',
-            //     errorStatus: -1
-            // }
+            return {
+                error: false,
+                msg: 'Receptorul nu se afla in scan activ',
+                errorStatus: -1
+            }
         }
 
         //2. Obtinem datele din elastic, prima data luam ultima data inregistrata pe care o folosim in urmatorul query in date range
@@ -166,9 +82,3 @@ let intervalMain = setInterval(async () => {
     }
 }, INTERVAL_SERVICE);
 
-// main().then(resultStatus => {
-//     console.log(resultStatus);
-// }).catch((msg) => {
-//     console.log('Eroare ');
-//     console.log(msg)
-// })

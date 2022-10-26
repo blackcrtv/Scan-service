@@ -28,3 +28,36 @@ const sendQuery = async (con, query) => {
     })
 }
 module.exports.sendQuery = sendQuery;
+
+/**
+ *Se verifica conexiunea la baza de date si se executa selectul pentru starea receptorului
+ * @returns Array[{ command_type:"", status: int }]
+ */
+ const checkDB = async () => {
+    try {
+        let { connDB, error: errorDB } = await setConnection();
+        if (errorDB) {
+            return false;
+        }
+        console.log('Db is open...')
+        let cmdState = await sendQuery(
+            connDB,
+            "SELECT command_type, status from catbox.commandrec order by id desc limit 1"
+        );
+
+        if (!cmdState) {
+            return false;
+        }
+        connDB.end(function (err) {
+            if (err) {
+                return console.log('error:' + err.message);
+            }
+            console.log('Close the database connection.');
+        });
+        return cmdState;
+    } catch (error) {
+        console.log("Eroare"); //de gestionat eroare de conexiune cand minipc este inchis
+        return false;
+    }
+};
+module.exports.checkDB = checkDB;
