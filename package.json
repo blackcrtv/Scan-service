@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "install-service": "node .\\Service\\installServ.js",
+    "uninstall-service": "node .\\Service\\uninstallServ.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +22,7 @@
   "dependencies": {
     "amqplib": "^0.10.3",
     "es7": "npm:@elastic/elasticsearch@^7.17.0",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "node-windows": "^1.0.0-beta.8"
   }
 }
