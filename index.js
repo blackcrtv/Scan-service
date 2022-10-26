@@ -1,6 +1,6 @@
 const { getAllRecomand } = require("./Tehn/allTehn");
 const { setConnection, sendQuery } = require("./database/mysql");
-const { searchElastic, insertElastic } = require("./database/elastic");
+const { searchElastic, insertElastic, insertElasticWithId } = require("./database/elastic");
 const { ES, errorLogFile, logFile, INTERVAL_SERVICE } = require('./conf.json');
 const { insertLog } = require('./Logs/formatLogs');
 
@@ -108,11 +108,11 @@ const main = async () => {
             }
         }
         if (!(flagDB[0].status == 4 && flagDB[0].command_type == 'SCAN')) {
-            return {
-                error: false,
-                msg: 'Receptorul nu se afla in scan activ',
-                errorStatus: -1
-            }
+            // return {
+            //     error: false,
+            //     msg: 'Receptorul nu se afla in scan activ',
+            //     errorStatus: -1
+            // }
         }
 
         //2. Obtinem datele din elastic, prima data luam ultima data inregistrata pe care o folosim in urmatorul query in date range
@@ -136,7 +136,7 @@ const main = async () => {
         //4. Inserare in ES cu update sau insert
         let insertResponse = await Promise.all(sourceRecomand.map(async (data) => {
             try {
-                return await insertElastic(ES.INDEX_RECOMANDARI, data);
+                return await insertElasticWithId(ES.INDEX_RECOMANDARI, data);
             } catch (error) {
                 return false
             }

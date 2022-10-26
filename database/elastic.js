@@ -55,6 +55,7 @@ const insertElasticWithId = async (_index, _data) => {
         const client = new Client7({ node: ES.IP })
 
         return await client.index({
+            id: _data.key,
             index: _index,
             body: _data
         });
@@ -68,4 +69,4 @@ const insertElasticWithId = async (_index, _data) => {
     }
 
 }
-module.exports.insertElastic = insertElastic;
+module.exports.insertElasticWithId = insertElasticWithId;
