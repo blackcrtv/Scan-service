@@ -4,6 +4,20 @@ const { getLastDateElastic , insertElasticWithId, getElasticData } = require("./
 const { ES, errorLogFile, logFile, INTERVAL_SERVICE } = require('./conf.json');
 const { insertLog } = require('./Logs/formatLogs');
 
+const express = require('express')
+
+const app = express();
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+
+  next();
+});
 
 const main = async () => {
     try {
