@@ -1,7 +1,7 @@
 {
     "RECOMANDARI": {
         "N": 2417,
-        "canaleMapare":{
+        "bandMapare":{
             "2G900": 10,
             "2G1800": 13,
             "3G900": 1,
@@ -33,5 +33,8 @@
         "user": "root",
         "password": "123456789",
         "database": "catbox"
-    }
+    },
+    "errorLogFile": "Logs/errorLog.txt",
+    "logFile": "Logs/log.txt",
+    "INTERVAL_SERVICE": 5000
 }

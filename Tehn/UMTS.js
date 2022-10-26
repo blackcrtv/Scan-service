@@ -6,7 +6,7 @@ const formatData = (table = [], channels) => {
 
   let list_ch = [];
   list_ch = table.map((elem, id) => {
-    let to_work = elem.system_info;
+    let to_work = elem._source.system_info;
     let mnc = to_work.plmn[0].mnc
       .join("")
       .slice(0, to_work.plmn[0].mnc_length || 2);

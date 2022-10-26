@@ -17,7 +17,11 @@ const insertElastic = async (_index, _data) => {
         });
     } catch (error) {
         console.log(error)
-        return null;
+        return {
+            err: true,
+            errMsg: error,
+            data: _data
+        };
     }
 
 }
@@ -30,7 +34,7 @@ const searchElastic = async (search, index_dest) => {
             index: index_dest,
             body: search
         })
-        console.log(body)
+        // console.log(body)
         return body;
     } catch (error) {
         console.log(error)

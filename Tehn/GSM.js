@@ -8,42 +8,42 @@ const formatData = (table = [], channels) => {
       vecini: null,
       serv: null,
     };
-  ch_group = { [RECOMANDARI.canaleMapare["2G900"]]: channels["2G900"].channels, [RECOMANDARI.canaleMapare["2G1800"]]: channels["2G1800"].channels };
-  // gasire serving
-  console.log(ch_group);
+  ch_group = { [RECOMANDARI.bandMapare["2G900"]]: channels["2G900"].channels, [RECOMANDARI.bandMapare["2G1800"]]: channels["2G1800"].channels };
 
+  // gasire serving
   let servings = {}; // putere, canal, vecini, key = operator
 
   let filteredData = table.map((el, i) => {
-    let vecini_filt = el.system_info.arfcn_neighbors;
-    let band = el.system_info.band;
-    let ctry_indicator = el.system_info.plmn?.mnc_length || 2;
+    let to_work = el._source;
+    let vecini_filt = to_work.system_info.arfcn_neighbors;
+    let band = to_work.system_info.band;
+    let ctry_indicator = to_work.system_info.plmn?.mnc_length || 2;
     let mnc =
-      el.system_info.plmn?.mnc?.join("").slice(0, ctry_indicator) ??
-      el.system_info.mnc?.join("").slice(0, 2);
+    to_work.system_info.plmn?.mnc?.join("").slice(0, ctry_indicator) ??
+    to_work.system_info.mnc?.join("").slice(0, 2);
     let mcc =
-      el.system_info.plmn?.mcc?.join("").slice(0, 3) ??
-      el.system_info.mcc?.join("").slice(0, 3);
+    to_work.system_info.plmn?.mcc?.join("").slice(0, 3) ??
+    to_work.system_info.mcc?.join("").slice(0, 3);
 
     vecini_filt = vecini_filt.filter((canal) => {
       // lasam doar canalele din fiecare tehnologie
-      if (ch_group[`${band}`].includes(canal)) return canal;
+      if (ch_group[`${band}`]?.includes(canal)) return canal;
     });
     return {
-      operator: `${mcc}-${mnc}-${el.system_info.band}`,
+      operator: `${mcc}-${mnc}-${to_work.system_info.band}`,
       params: {
-        putere: el.system_info.rssi,
-        canal: el.system_info.arfcn,
-        band: el.system_info.band,
+        putere: to_work.system_info.rssi,
+        canal: to_work.system_info.arfcn,
+        band: to_work.system_info.band,
         vecini: vecini_filt,
-        cell_id: el.system_info.cell_id,
-        lac: el.system_info.lac,
-        ncc: el.system_info.ncc,
-        bcc: el.system_info.bcc,
+        cell_id: to_work.system_info.cell_id,
+        lac: to_work.system_info.lac,
+        ncc: to_work.system_info.ncc,
+        bcc: to_work.system_info.bcc,
         mnc: mnc,
         mcc: mcc,
         _id: el._id,
-        timestamp: table[0]["@timestamp"],
+        timestamp: el["@timestamp"],
         markImport: el.marker ?? false,
       },
     };

@@ -19,7 +19,6 @@ const getAllRecomand = (dataGSM = [], dataUMTS = [], dataLTE = []) =>{
     let GSM = (dataGSM ? getRecomandare2G(dataGSM) : {});
     let UMTS = (dataUMTS ? getRecomandare3G(dataUMTS) : {});
     let LTE = (dataLTE ? getRecomandare4G(dataLTE) : {});
-
     let structura_obj = {
         provider: 'mnc text + ctry',
         tehnologie: 'GSM UMTS LTE',

@@ -12,7 +12,7 @@ const formatData = (table = []) => {
 
   let list_ch = [];
   list_ch = table.map((elem, id) => {
-    let to_work = elem.system_info;
+    let to_work = elem._source.system_info;
     let mcc = to_work.sib1.plmn[0].mcc.join("");
     let mnc = to_work.sib1.plmn[0].mnc
       .join("")
@@ -24,7 +24,7 @@ const formatData = (table = []) => {
     let obj = {
       id: elem._id,
       rat: "4G",
-      rssi: to_work.rssi,
+      rssi: to_work.rsrp,
       rsrp: to_work.rsrp,
       earfcn: earfcn,
       pci: pci,
