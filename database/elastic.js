@@ -109,7 +109,7 @@ module.exports.getLastDateElastic = getLastDateElastic;
                         {
                             range: {
                                 "@timestamp": {
-                                    gte: date + "||-1h",
+                                    gte: date + "||-3m",
                                     lte: date
                                 }
                             }
