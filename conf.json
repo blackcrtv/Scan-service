@@ -21,12 +21,12 @@
         "QUE_SCAN": "SCAN_4G"
     },
     "ES": {
-        "IP": "http://172.17.120.119:9200",
+        "IP": "http://localhost:9200",
         "INDEX_RECOMANDARI": "index_recomandari",
-        "INDEX_GSM": "index_scan_2g_beta",
-        "INDEX_UMTS": "index_scan_3g_beta",
-        "INDEX_LTE": "index_scan_4g_beta",
-        "INDEX_ALL_SCAN": "index_scan_*"
+        "INDEX_GSM": "index_scan_beta_2g",
+        "INDEX_UMTS": "index_scan_beta_3g",
+        "INDEX_LTE": "index_scan_beta_4g",
+        "INDEX_ALL_SCAN": "index_scan_beta*"
     },
     "MYSQL": {
         "host": "172.17.120.122",
