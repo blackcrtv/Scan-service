@@ -9,6 +9,7 @@ const setConnection = async (settings = MYSQL) => {
             if (err) {
                 return reject({ connDB: false, error: err });
             }
+            console.log('Db is open...');
             return resolve({ connDB: con, error: false })
         });
 
@@ -39,7 +40,6 @@ module.exports.sendQuery = sendQuery;
         if (errorDB) {
             return false;
         }
-        console.log('Db is open...')
         let cmdState = await sendQuery(
             connDB,
             "SELECT command_type, status from catbox.commandrec order by id desc limit 1"
