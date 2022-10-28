@@ -37,7 +37,7 @@ const formatData = (table = []) => {
       mnc: mnc,
       mcc: mcc,
       tac: to_work.sib1.tac,
-      timestamp: table[0]._source?.["@timestamp"],
+      timestamp: table[0]._source?.["timestampPrimit"],
       mcc_mnc: `${mcc}-${mnc}`,
       mcc_mnc_canal: `${mcc}-${mnc}-${earfcn}`,
       markImport: elem._source?.marker ?? false,

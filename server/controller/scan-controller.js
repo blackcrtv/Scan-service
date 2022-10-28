@@ -15,7 +15,7 @@ const getScanData = async (req, res, next) => {
                 errorStatus: 4
             }
         }
-        let lastDate = lastDateBucket.hits.hits[0]?._source["@timestamp"] || "2022-10-25T13:05:03.611Z";
+        let lastDate = lastDateBucket.hits.hits[0]?._source["timestampPrimit"] || "2022-10-25T13:05:03.611Z";
 
         let dataResponse, responeElastic;
 
@@ -77,7 +77,7 @@ const getNetworkEnv = async (req, res, next) => {
                 errorStatus: 4
             }
         }
-        let lastDate = lastDateBucket.hits.hits[0]?._source["@timestamp"] || "2022-10-25T13:05:03.611Z";
+        let lastDate = lastDateBucket.hits.hits[0]?._source["timestampPrimit"] || "2022-10-25T13:05:03.611Z";
 
         switch (recTehn) {
             case "GSM":

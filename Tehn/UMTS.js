@@ -27,7 +27,7 @@ const formatData = (table = [], channels) => {
       rnc_id: 0, // rnc_id de schimbat
       intra: [],
       inter: [],
-      timestamp: table[0]._source?.["@timestamp"],
+      timestamp: table[0]._source?.["timestampPrimit"],
       id: elem._id,
       mcc_mnc: `${mcc}-${mnc}`,
       markImport: elem._source?.marker ?? false,

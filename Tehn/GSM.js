@@ -43,8 +43,8 @@ const formatData = (table = [], channels) => {
         mnc: mnc,
         mcc: mcc,
         _id: el._id,
-        timestamp: el["@timestamp"],
-        markImport: el.marker ?? false,
+        timestamp: to_work["timestampPrimit"],
+        markImport: to_work.marker ?? false,
       },
     };
   });

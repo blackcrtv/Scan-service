@@ -80,7 +80,7 @@ const getLastDateElastic = async (index = ES.INDEX_ALL_SCAN) => {
             size: 1,
             sort: [
                 {
-                    "@timestamp": { order: "desc" }
+                    "timestampPrimit": { order: "desc" }
                 }
             ]
         };
@@ -108,7 +108,7 @@ module.exports.getLastDateElastic = getLastDateElastic;
                     must: [
                         {
                             range: {
-                                "@timestamp": {
+                                "timestampPrimit": {
                                     gte: date + "||-3m",
                                     lte: date
                                 }
