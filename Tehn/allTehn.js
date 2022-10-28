@@ -54,12 +54,12 @@ const getAllRecomand = (dataGSM = [], dataUMTS = [], dataLTE = []) =>{
         structura_obj.rec_cell = GSM[key].cell_info.cell_id;
         structura_obj.rec_rssi = GSM[key].rssi;
         structura_obj.id = GSM[key].cell_info._id;
-        structura_obj.obj_catch = { ...GSM[key].cell_info }
+        structura_obj.obj_catch = { ...GSM[key].cell_info, scor: GSM[key].scor, aparitii:  GSM[key].aparitii}
         structura_obj.timestamp = GSM[key].cell_info.timestamp;
         structura_obj.band_str = bands_2G[GSM[key].cell_info.band];
         structura_obj.key = `${GSM[key].cell_info.mcc}-${GSM[key].cell_info.mnc}-GSM-${GSM[key].canal}`;
         structura_obj.elasticID = `${GSM[key].cell_info.mcc}-${GSM[key].cell_info.mnc}-GSM-${GSM[key].canal}`;
-
+        console.log(GSM[key])
         sourceTab.push(structura_obj)
     }
     for (const key in UMTS) {
