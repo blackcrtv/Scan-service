@@ -121,7 +121,7 @@ module.exports.getLastDateElastic = getLastDateElastic;
                 {
                     "timestampPrimit": { order: "desc" }
                 }
-            ]
+            ], size: 10000
         };
         return await searchElastic(queryBody, index);
     } catch (error) {
