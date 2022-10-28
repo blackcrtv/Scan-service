@@ -116,7 +116,12 @@ module.exports.getLastDateElastic = getLastDateElastic;
                         }
                     ]
                 }
-            }
+            },
+            sort: [
+                {
+                    "timestampPrimit": { order: "desc" }
+                }
+            ]
         };
         return await searchElastic(queryBody, index);
     } catch (error) {
