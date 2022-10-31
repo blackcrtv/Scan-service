@@ -19,11 +19,11 @@ const formatData = (table = [], channels) => {
     let band = to_work.system_info.band;
     let ctry_indicator = to_work.system_info.plmn?.mnc_length || 2;
     let mnc =
-    to_work.system_info.plmn?.mnc?.join("").slice(0, ctry_indicator) ??
-    to_work.system_info.mnc?.join("").slice(0, 2);
+      to_work.system_info.plmn?.mnc?.join("").slice(0, ctry_indicator) ??
+      to_work.system_info.mnc?.join("").slice(0, 2);
     let mcc =
-    to_work.system_info.plmn?.mcc?.join("").slice(0, 3) ??
-    to_work.system_info.mcc?.join("").slice(0, 3);
+      to_work.system_info.plmn?.mcc?.join("").slice(0, 3) ??
+      to_work.system_info.mcc?.join("").slice(0, 3);
 
     vecini_filt = vecini_filt.filter((canal) => {
       // lasam doar canalele din fiecare tehnologie
@@ -31,6 +31,7 @@ const formatData = (table = [], channels) => {
     });
     return {
       operator: `${mcc}-${mnc}-${to_work.system_info.band}`,
+      uniqueCh: to_work.system_info.arfcn,
       params: {
         putere: to_work.system_info.rssi,
         canal: to_work.system_info.arfcn,
@@ -45,11 +46,25 @@ const formatData = (table = [], channels) => {
         _id: el._id,
         timestamp: table[0]._source?.["timestampPrimit"],
         markImport: to_work.marker ?? false,
-      },
+      }
     };
   });
 
-  let groupData = groupBy(filteredData, "operator", "params");
+  //Grupare dupa canal
+  let grpDataCanal = groupBy(filteredData, "uniqueCh");
+  let mergedChannelData = [];
+  Object.keys(grpDataCanal).forEach((canal) => {
+    let aggData = grpDataCanal[canal].reduce((acc, curr) => {
+      if (!acc.params) return acc = { ...curr };
+      if (acc.params?.putere < curr.params.putere) {
+        return acc = { ...curr, params: { ...curr.params, vecini: uniqueFromArray([...curr.params.vecini, ...(acc.params?.vecini ? acc.params?.vecini : [])]) } }
+      }
+      return acc = { ...curr, params: { ...acc.params, vecini: uniqueFromArray([...curr.params.vecini, ...(acc.params?.vecini ? acc.params?.vecini : [])]) } }
+    }, {});
+    mergedChannelData.push(aggData);
+  });
+
+  let groupData = groupBy(mergedChannelData, "operator", "params");
 
   Object.keys(groupData).forEach((item) => {
     let serv = groupData[item]
