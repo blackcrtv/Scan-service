@@ -109,7 +109,7 @@ const getElasticData = async (index = ES.INDEX_GSM, date = "2022-10-25T13:05:03.
                         {
                             range: {
                                 "timestampPrimit": {
-                                    gte: date + "||-3m",
+                                    gte: date + "||-" + ES.RANGE_SCAN_QUERY,
                                     lte: date
                                 }
                             }
