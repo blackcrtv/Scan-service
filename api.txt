@@ -1,0 +1,12 @@
+POST: http://localhost:5000/api/scan/<GSM> --param <ALL> returns all tehnologies
+    body:{
+        gsmCatch: [], -- int values of cell_ids in catch
+        umtsCatch:[], 
+        lteCatch: []
+    }
+POST: http://localhost:5000/api/network-env/<GSM> --param <ALL> returns all tehnologies
+    body:{
+        gsmCatch: [],   -- int values of cell_ids in catch
+        umtsCatch:[], 
+        lteCatch: []
+    }
