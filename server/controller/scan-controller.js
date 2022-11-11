@@ -6,7 +6,6 @@ const { insertLog } = require('../../Logs/formatLogs');
 const getScanData = async (req, res, next) => {
     const ratScan = req.params.scanTehn;
     let { gsmCatch, umtsCatch, lteCatch } = req.body;
-
     try {
         // Obtinem datele din elastic, prima data luam ultimul timestamp inregistrat pe care il folosim in urmatorul query in date range
         let lastDateBucket = await getLastDateElastic();
@@ -97,24 +96,16 @@ const getNetworkEnv = async (req, res, next) => {
     let bucketElastic = {};
     let filterElastic = [];
     let { gsmCatch, umtsCatch, lteCatch } = req.body;
-
+    console.log(req.body)
     try {
         let lastDateBucket = await getLastDateElastic();
         if (!lastDateBucket) {
-            throw {
-                error: true,
-                msg: 'Eroare select timestamp din elasticsearch',
-                errorStatus: 4
-            }
+            throw new Error('Eroare select timestamp din elasticsearch')
         }
         // let lastDate = lastDateBucket.hits.hits[0]?._source["timestampPrimit"] || "2022-10-25T13:05:03.611Z";
         let aggData = await getTagTimestamp();
         if (!aggData) {
-            throw {
-                error: true,
-                msg: 'Eroare select timestamp/tag din elasticsearch',
-                errorStatus: 4
-            }
+            throw new Error('Eroare select timestamp/tag din elasticsearch')
         }
 
         let structTehn = aggData.tehn.buckets?.reduce((acc, curr) => {
@@ -169,6 +160,7 @@ const getNetworkEnv = async (req, res, next) => {
             "networkEnv": sourceRecomand
         })
     } catch (error) {
+        console.log(error)
         insertLog(error, errorLogFile);
         res.json({
             "networkEnv": [],
@@ -182,13 +174,20 @@ const filterCatchActive = (data = [], catchList = []) => {
         if (!catchList.length) {
             return data;
         }
+        catchList = catchList.map(el => parseInt(el));
+        // console.log(catchList)
         return data.filter((cellObj) => {
             if (cellObj._index.includes('2g')) {
                 if (!catchList.includes(cellObj._source.system_info.cell_id))
                     return cellObj;
             } else if (cellObj._index.includes('3g')) {
-                if (!catchList.includes(cellObj._source.system_info.cell_info[0].network_cell_id))
+                if (!catchList.includes(cellObj._source.system_info.cell_info[0].network_cell_id)){
+                    // // console.log(JSON.stringify(cellObj))
+                    // console.log(cellObj._source.system_info.cell_info[0].network_cell_id)
+                    // insertLog(JSON.stringify(cellObj), errorLogFile);
+                    // console.log(cellObj._source.system_info.cell_info[0].network_cell_id)
                     return cellObj;
+                }
             } else if (cellObj._index.includes('4g')) {
                 if (!catchList.includes(cellObj._source.system_info.sib1.l3cell_id))
                     return cellObj;
