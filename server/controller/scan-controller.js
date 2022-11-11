@@ -6,6 +6,7 @@ const { insertLog } = require('../../Logs/formatLogs');
 const getScanData = async (req, res, next) => {
     const ratScan = req.params.scanTehn;
     let { gsmCatch, umtsCatch, lteCatch } = req.body;
+
     try {
         // Obtinem datele din elastic, prima data luam ultimul timestamp inregistrat pe care il folosim in urmatorul query in date range
         let lastDateBucket = await getLastDateElastic();
@@ -28,9 +29,9 @@ const getScanData = async (req, res, next) => {
 
         let structTehn = aggData.tehn.buckets?.reduce((acc, curr) => {
             let mapper = {
-                "index_scan_beta_2g": "GSM",
-                "index_scan_beta_3g": "UMTS",
-                "index_scan_beta_4g": "LTE"
+                [ES.INDEX_GSM]: "GSM",
+                [ES.INDEX_UMTS]: "UMTS",
+                [ES.INDEX_LTE]: "LTE"
             }
 
             return acc = {
@@ -45,26 +46,25 @@ const getScanData = async (req, res, next) => {
             "UMTS": {},
             "LTE": {}
         });
-
-        let dataResponse, responeElastic;
+        let dataResponse, responseElastic;
 
         switch (ratScan) {
             case "GSM":
-                responeElastic = await getElasticDataWithTag(ES.INDEX_GSM, structTehn[ratScan].timestamp, structTehn[ratScan].tags);
+                responseElastic = await getElasticDataWithTag(ES.INDEX_GSM, structTehn[ratScan].timestamp, structTehn[ratScan].tags);
                 dataResponse = {
-                    "GSM": filterCatchActive(responeElastic.hits.hits, gsmCatch ?? [])
+                    "GSM": filterCatchActive(responseElastic.hits.hits, gsmCatch)
                 }
                 break;
             case "UMTS":
-                responeElastic = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn[ratScan].timestamp, structTehn[ratScan].tags);
+                responseElastic = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn[ratScan].timestamp, structTehn[ratScan].tags);
                 dataResponse = {
-                    "UMTS": filterCatchActive(responeElastic.hits.hits, umtsCatch ?? [])
+                    "UMTS": filterCatchActive(responseElastic.hits.hits, umtsCatch ?? [])
                 }
                 break;
             case "LTE":
-                responeElastic = await getElasticDataWithTag(ES.INDEX_LTE, structTehn[ratScan].timestamp, structTehn[ratScan].tags);
+                responseElastic = await getElasticDataWithTag(ES.INDEX_LTE, structTehn[ratScan].timestamp, structTehn[ratScan].tags);
                 dataResponse = {
-                    "LTE": filterCatchActive(responeElastic.hits.hits, lteCatch ?? [])
+                    "LTE": filterCatchActive(responseElastic.hits.hits, lteCatch ?? [])
                 }
                 break;
             default:
@@ -99,7 +99,6 @@ const getNetworkEnv = async (req, res, next) => {
     let { gsmCatch, umtsCatch, lteCatch } = req.body;
 
     try {
-        //2. Obtinem datele din elastic, prima data luam ultima data inregistrata pe care o folosim in urmatorul query in date range
         let lastDateBucket = await getLastDateElastic();
         if (!lastDateBucket) {
             throw {
@@ -108,33 +107,61 @@ const getNetworkEnv = async (req, res, next) => {
                 errorStatus: 4
             }
         }
-        let lastDate = lastDateBucket.hits.hits[0]?._source["timestampPrimit"] || "2022-10-25T13:05:03.611Z";
+        // let lastDate = lastDateBucket.hits.hits[0]?._source["timestampPrimit"] || "2022-10-25T13:05:03.611Z";
+        let aggData = await getTagTimestamp();
+        if (!aggData) {
+            throw {
+                error: true,
+                msg: 'Eroare select timestamp/tag din elasticsearch',
+                errorStatus: 4
+            }
+        }
+
+        let structTehn = aggData.tehn.buckets?.reduce((acc, curr) => {
+            let mapper = {
+                [ES.INDEX_GSM]: "GSM",
+                [ES.INDEX_UMTS]: "UMTS",
+                [ES.INDEX_LTE]: "LTE"
+            }
+
+            return acc = {
+                ...acc, [mapper[curr.key]]: {
+                    timestamp: curr.timestamp.buckets[0].key_as_string,
+                    tags: curr.tag.buckets.map(el => el.key)
+                }
+            }
+
+        }, {
+            "GSM": {},
+            "UMTS": {},
+            "LTE": {}
+        });
 
         switch (recTehn) {
             case "GSM":
-                bucketElastic = await getElasticData(ES.INDEX_GSM, lastDate);
+                bucketElastic = await getElasticDataWithTag(ES.INDEX_GSM, structTehn[recTehn].timestamp, structTehn[recTehn].tags);
                 filterElastic = filterCatchActive(bucketElastic.hits.hits, gsmCatch);
                 sourceRecomand = getAllRecomand(filterElastic);
                 break;
             case "UMTS":
-                bucketElastic = await getElasticData(ES.INDEX_UMTS, lastDate);
-                filterElastic = filterCatchActive(bucketElastic.hits.hits, umtsCatch);
+                bucketElastic = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn[recTehn].timestamp, structTehn[recTehn].tags);
+                filterElastic = filterCatchActive(bucketElastic.hits.hits, umtsCatch ?? []);
 
                 sourceRecomand = getAllRecomand([], filterElastic, []);
                 break;
             case "LTE":
-                bucketElastic = await getElasticData(ES.INDEX_LTE, lastDate);
-                filterElastic = filterCatchActive(bucketElastic.hits.hits, lteCatch);
+                bucketElastic = await getElasticDataWithTag(ES.INDEX_LTE, structTehn[recTehn].timestamp, structTehn[recTehn].tags);
+                filterElastic = filterCatchActive(bucketElastic.hits.hits, lteCatch ?? []);
 
                 sourceRecomand = getAllRecomand([], [], filterElastic);
                 break;
             default:
-                let dataGSM = await getElasticData(ES.INDEX_GSM, lastDate);
-                let dataUMTS = await getElasticData(ES.INDEX_UMTS, lastDate);
-                let dataLTE = await getElasticData(ES.INDEX_LTE, lastDate);
-                let dataGSMFiltered = filterCatchActive(dataGSM.hits.hits, gsmCatch);
-                let dataUMTSFiltered = filterCatchActive(dataUMTS.hits.hits, umtsCatch);
-                let dataLTEFiltered = filterCatchActive(dataLTE.hits.hits, lteCatch);
+                let dataGSM = await getElasticDataWithTag(ES.INDEX_GSM, structTehn["GSM"].timestamp, structTehn["GSM"].tags);
+                let dataUMTS = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn["UMTS"].timestamp, structTehn["UMTS"].tags);
+                let dataLTE = await getElasticDataWithTag(ES.INDEX_LTE, structTehn["LTE"].timestamp, structTehn["LTE"].tags);
+                let dataGSMFiltered = filterCatchActive(dataGSM.hits.hits, gsmCatch ?? []);
+                let dataUMTSFiltered = filterCatchActive(dataUMTS.hits.hits, umtsCatch ?? []);
+                let dataLTEFiltered = filterCatchActive(dataLTE.hits.hits, lteCatch ?? []);
                 sourceRecomand = getAllRecomand(dataGSMFiltered, dataUMTSFiltered, dataLTEFiltered);
                 break;
         }
@@ -152,13 +179,15 @@ const getNetworkEnv = async (req, res, next) => {
 
 const filterCatchActive = (data = [], catchList = []) => {
     try {
-        if (!catchList.length) return data;
+        if (!catchList.length) {
+            return data;
+        }
         return data.filter((cellObj) => {
             if (cellObj._index.includes('2g')) {
                 if (!catchList.includes(cellObj._source.system_info.cell_id))
                     return cellObj;
             } else if (cellObj._index.includes('3g')) {
-                if (!catchList.includes(cellObj._source.system_info[0].network_cell_id))
+                if (!catchList.includes(cellObj._source.system_info.cell_info[0].network_cell_id))
                     return cellObj;
             } else if (cellObj._index.includes('4g')) {
                 if (!catchList.includes(cellObj._source.system_info.sib1.l3cell_id))
