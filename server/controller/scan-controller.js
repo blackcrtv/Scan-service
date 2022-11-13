@@ -135,7 +135,7 @@ const getNetworkEnv = async (req, res, next) => {
                 sourceRecomand = getAllRecomand(filterElastic);
                 break;
             case "UMTS":
-                bucketElastic = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn[recTehn].timestamp, structTehn[recTehn].tags);
+                // bucketElastic = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn[recTehn].timestamp, structTehn[recTehn].tags);
                 filterElastic = filterCatchActive(bucketElastic.hits.hits, umtsCatch ?? []);
 
                 sourceRecomand = getAllRecomand([], filterElastic, []);
@@ -181,18 +181,14 @@ const filterCatchActive = (data = [], catchList = []) => {
                 if (!catchList.includes(cellObj._source.system_info.cell_id))
                     return cellObj;
             } else if (cellObj._index.includes('3g')) {
-                if (!catchList.includes(cellObj._source.system_info.cell_info[0].network_cell_id)){
-                    // // console.log(JSON.stringify(cellObj))
-                    // console.log(cellObj._source.system_info.cell_info[0].network_cell_id)
-                    // insertLog(JSON.stringify(cellObj), errorLogFile);
-                    // console.log(cellObj._source.system_info.cell_info[0].network_cell_id)
+                if (!catchList.includes(cellObj._source.system_info.cell_info[0].network_cell_id)) {
                     return cellObj;
                 }
             } else if (cellObj._index.includes('4g')) {
                 if (!catchList.includes(cellObj._source.system_info.sib1.l3cell_id))
                     return cellObj;
-            }
-            return cellObj;
+            } else
+                return cellObj;
         });
 
     } catch (error) {
