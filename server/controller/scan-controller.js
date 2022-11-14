@@ -135,9 +135,8 @@ const getNetworkEnv = async (req, res, next) => {
                 sourceRecomand = getAllRecomand(filterElastic);
                 break;
             case "UMTS":
-                // bucketElastic = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn[recTehn].timestamp, structTehn[recTehn].tags);
+                bucketElastic = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn[recTehn].timestamp, structTehn[recTehn].tags);
                 filterElastic = filterCatchActive(bucketElastic.hits.hits, umtsCatch ?? []);
-
                 sourceRecomand = getAllRecomand([], filterElastic, []);
                 break;
             case "LTE":
