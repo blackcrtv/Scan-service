@@ -44,6 +44,22 @@ const searchElastic = async (search, index_dest) => {
 }
 module.exports.searchElastic = searchElastic;
 
+const deleteElastic = async (search, index_dest) => {
+    try {
+        const client = new Client7({ node: ES.IP })
+        let { body } = await client.search({
+            index: index_dest,
+            body: search
+        })
+        return body;
+    } catch (error) {
+        console.log(error)
+        return null;
+    }
+
+}
+module.exports.deleteElastic = deleteElastic;
+
 /**
  * Inserare in elastic cu _id configurat ce trebuie sa se regaseasca in obiect
  * @param {string} _index 
@@ -221,3 +237,27 @@ const getElasticDataWithTag = async (index = ES.INDEX_GSM, date = "2022-10-25T13
     }
 };
 module.exports.getElasticDataWithTag = getElasticDataWithTag;
+
+const buildQuery = (entries = [], method = "must") => {
+    try {
+        return {
+            "query": {
+                "bool": {
+                    [method]: [
+                        entries.map(keys => {
+                            return {
+                                [keys.type]: {
+                                    [keys.field]: keys.values
+                                }
+                            }
+                        })
+                    ]
+                }
+            }
+        }
+    } catch (error) {
+        throw new Error('Eroare construire query');
+    }
+
+}
+module.exports.buildQuery = buildQuery;

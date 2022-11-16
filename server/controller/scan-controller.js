@@ -1,5 +1,5 @@
 const { getAllRecomand } = require("../../Tehn/allTehn");
-const { getLastDateElastic, getElasticData, getTagTimestamp, getElasticDataWithTag } = require("../../database/elastic");
+const { getLastDateElastic, getElasticData, getTagTimestamp, getElasticDataWithTag, buildQuery, deleteElastic } = require("../../database/elastic");
 const { ES, errorLogFile, logFile } = require('../../conf.json');
 const { insertLog } = require('../../Logs/formatLogs');
 
@@ -197,7 +197,56 @@ const filterCatchActive = (data = [], catchList = []) => {
     }
 }
 
+const deleteScanCellid = async (req, res, next) => {
+    let { gsmCatch, umtsCatch, lteCatch } = req.body;
+    try {
+        let queryGSM = buildQuery([
+            {
+                type: "terms",
+                field: "system_info.cell_id",
+                values: [...gsmCatch]
+            }
+        ]);
+        let queryUMTS = buildQuery([
+            {
+                type: "terms",
+                field: "system_info.cell_info.network_cell_id",
+                values: [...umtsCatch]
+            }, {
+                type: "range",
+                field: "@timestamp",
+                values: {
+                    "gte": "now-1h"
+                }
+            }
+        ]);
+        let queryLTE = buildQuery([
+            {
+                type: "terms",
+                field: "system_info.sib1.l3cell_id",
+                values: [...lteCatch]
+            }
+        ]);
+
+        let resultGSM = await deleteElastic(queryGSM, ES.INDEX_GSM);
+        let resultUMTS = await deleteElastic(queryUMTS, ES.INDEX_UMTS);
+        let resultLTE = await deleteElastic(queryLTE, ES.INDEX_LTE);
+
+        res.json({
+            resultGSM,
+            resultUMTS,
+            resultLTE
+        });
+    } catch (error) {
+        insertLog(error, errorLogFile);
+        res.json({
+            "error": error
+        });
+    }
+}
+
 module.exports = {
     getScanData,
-    getNetworkEnv
+    getNetworkEnv,
+    deleteScanCellid
 }

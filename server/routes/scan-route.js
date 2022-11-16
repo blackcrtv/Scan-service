@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.post('/scan/:scanTehn', scanController.getScanData);
 router.post('/network-env/:recTehn', scanController.getNetworkEnv);
+router.delete('/delete-cellid', scanController.deleteScanCellid);
 
 module.exports = router;
