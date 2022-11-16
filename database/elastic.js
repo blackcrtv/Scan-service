@@ -47,7 +47,7 @@ module.exports.searchElastic = searchElastic;
 const deleteElastic = async (search, index_dest) => {
     try {
         const client = new Client7({ node: ES.IP })
-        let { body } = await client.search({
+        let { body } = await client.deleteByQuery({
             index: index_dest,
             body: search
         })
