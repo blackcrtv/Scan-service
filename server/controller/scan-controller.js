@@ -1,5 +1,5 @@
 const { getAllRecomand } = require("../../Tehn/allTehn");
-const { getLastDateElastic, getElasticData, getTagTimestamp, getElasticDataWithTag, buildQuery, deleteElastic } = require("../../database/elastic");
+const { getLastDateElastic, getTagTimestamp, getElasticDataWithTag, buildQuery, deleteElastic } = require("../../database/elastic");
 const { ES, errorLogFile, logFile } = require('../../conf.json');
 const { insertLog } = require('../../Logs/formatLogs');
 
@@ -96,7 +96,6 @@ const getNetworkEnv = async (req, res, next) => {
     let bucketElastic = {};
     let filterElastic = [];
     let { gsmCatch, umtsCatch, lteCatch } = req.body;
-    console.log(req.body)
     try {
         let lastDateBucket = await getLastDateElastic();
         if (!lastDateBucket) {
