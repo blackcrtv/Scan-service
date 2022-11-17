@@ -1,4 +1,4 @@
-const { insertLog } = require('./Logs/formatLogs');
+const { insertLog } = require('./Logs/Script/formatLogs');
 const bodyParser = require('body-parser');
 const scanRoute = require('./server/routes/scan-route');
 const { errorLogFile, logFile, EXPRESS_PORT } = require('./conf.json');

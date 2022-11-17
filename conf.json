@@ -37,6 +37,10 @@
     },
     "errorLogFile": "Logs/errorLog.txt",
     "logFile": "Logs/log.txt",
+    "CACHE": {
+        "path": "local/cache.json",
+        "file": "./cache.json"
+    },
     "EXPRESS_PORT": 5000,
     "WIN_SERVICE_NAME": "Network Env Service",
     "WIN_SERVICE_DESCRIPTION": "Serviciu de realizarea a recomandatelor",

@@ -1,5 +1,6 @@
 const { Client: Client7 } = require('es7')
-const { ES } = require('../conf.json')
+const { ES } = require('../conf.json');
+const { insertLog } = require('../Logs/Script/formatLogs')
 
 
 /**
