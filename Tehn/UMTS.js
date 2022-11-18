@@ -175,6 +175,7 @@ const getScore_UMTS = (table = []) => {
           ...serv,
           lac: new_lac,
           lac_list,
+          cellIdVecini: cell_op,
           cell_id: incrCellInfo(cell_op, "cell_id"),
           cell_list: [...cell_op],
         },

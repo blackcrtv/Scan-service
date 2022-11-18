@@ -194,8 +194,8 @@ const setRecLTE = (elem_list = []) => {
       pci_interzis: [...vecini, ...serving_pci, ...intra],
       serving_cell: serv,
       lista_redusa: getListaRedusa(serv, [...vecini, ...serving_pci, ...intra]),
-      tac_op,
-      l3cell_op,
+      tac_op: uniqueFromArray(tac_op),
+      l3cell_op
     };
   }
 
@@ -233,7 +233,8 @@ const setRecLTE = (elem_list = []) => {
         earfcn: obj_operator[canal].serving_cell.earfcn,
         tac_op: obj_operator[canal].tac_op,
         l3cell_op: obj_operator[canal].l3cell_op,
-      },
+        cellIdVecini: uniqueFromArray(obj_operator[canal].l3cell_op)
+      }
     };
   }
 

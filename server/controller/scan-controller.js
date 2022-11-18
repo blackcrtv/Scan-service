@@ -102,6 +102,8 @@ const getNetworkEnv = async (req, res, next) => {
     let filterElastic = [];
     let { gsmCatch, umtsCatch, lteCatch, lockedChannels } = req.body;
     let DUMMY_GSM = DUMMY.filter(cell => cell._index === "index_scan_beta_2g")
+    let DUMMY_UMTS = DUMMY.filter(cell => cell._index === "index_scan_beta_3g")
+    let DUMMY_LTE = DUMMY.filter(cell => cell._index === "index_scan_beta_4g")
     try {
         // let lastDateBucket = await getLastDateElastic();
         // if (!lastDateBucket) {
@@ -151,13 +153,13 @@ const getNetworkEnv = async (req, res, next) => {
                 sourceRecomand = getAllRecomand([], [], filterElastic);
                 break;
             default:
-                let dataGSM = await getElasticDataWithTag(ES.INDEX_GSM, structTehn["GSM"].timestamp, structTehn["GSM"].tags);
-                let dataUMTS = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn["UMTS"].timestamp, structTehn["UMTS"].tags);
-                let dataLTE = await getElasticDataWithTag(ES.INDEX_LTE, structTehn["LTE"].timestamp, structTehn["LTE"].tags);
-                let dataGSMFiltered = filterCatchActive(dataGSM.hits.hits, gsmCatch ?? []);
-                let dataUMTSFiltered = filterCatchActive(dataUMTS.hits.hits, umtsCatch ?? []);
-                let dataLTEFiltered = filterCatchActive(dataLTE.hits.hits, lteCatch ?? []);
-                sourceRecomand = getAllRecomand(dataGSMFiltered, dataUMTSFiltered, dataLTEFiltered);
+                // let dataGSM = await getElasticDataWithTag(ES.INDEX_GSM, structTehn["GSM"].timestamp, structTehn["GSM"].tags);
+                // let dataUMTS = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn["UMTS"].timestamp, structTehn["UMTS"].tags);
+                // let dataLTE = await getElasticDataWithTag(ES.INDEX_LTE, structTehn["LTE"].timestamp, structTehn["LTE"].tags);
+                // let dataGSMFiltered = filterCatchActive(dataGSM.hits.hits, gsmCatch ?? []);
+                // let dataUMTSFiltered = filterCatchActive(dataUMTS.hits.hits, umtsCatch ?? []);
+                // let dataLTEFiltered = filterCatchActive(dataLTE.hits.hits, lteCatch ?? []);
+                sourceRecomand = getAllRecomand(DUMMY_GSM, DUMMY_UMTS, DUMMY_LTE);
                 break;
         }
         cacheData.setData(sourceRecomand, lockedChannels ?? []);
@@ -251,8 +253,23 @@ const deleteScanCellid = async (req, res, next) => {
     }
 }
 
+const resetIteratii = async (req, res, next) => {
+    try {
+        cacheData.resetIteratii();
+        res.json({
+            "result": true
+        });
+    } catch (error) {
+        insertLog(error, errorLogFile);
+        res.json({
+            "error": error
+        });
+    }
+}
+
 module.exports = {
     getScanData,
     getNetworkEnv,
-    deleteScanCellid
+    deleteScanCellid,
+    resetIteratii
 }
