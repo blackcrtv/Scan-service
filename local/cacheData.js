@@ -15,28 +15,23 @@ const uniqueFromArray = (a = []) => {
 const getCellsList = (data = []) => {
     try {
         return data.reduce((prev, curr) => {
-            try {
-                if (curr.tehnologie === "GSM") {
-                    return prev = {
-                        ...prev,
-                        "GSM": uniqueFromArray([...prev.GSM, ...curr.obj_catch.cellIdVecini])
-                    }
+            if (curr.tehnologie === "GSM") {
+                return prev = {
+                    ...prev,
+                    "GSM": uniqueFromArray([...prev.GSM, ...curr.obj_catch.cellIdVecini])
                 }
-                else if (curr.tehnologie === "UMTS") {
-                    return prev = {
-                        ...prev,
-                        "UMTS": uniqueFromArray([...prev.UMTS, ...curr.obj_catch.cellIdVecini])
-                    }
+            }
+            else if (curr.tehnologie === "UMTS") {
+                return prev = {
+                    ...prev,
+                    "UMTS": uniqueFromArray([...prev.UMTS, ...curr.obj_catch.cellIdVecini])
                 }
-                else if (curr.tehnologie === "LTE") {
-                    return prev = {
-                        ...prev,
-                        "LTE": uniqueFromArray([...prev.LTE, curr.obj_catch.cellIdVecini])
-                    }
+            }
+            else if (curr.tehnologie === "LTE") {
+                return prev = {
+                    ...prev,
+                    "LTE": uniqueFromArray([...prev.LTE, ...curr.obj_catch.cellIdVecini])
                 }
-            } catch (error) {
-                if(!curr.obj_catch.cellIdVecini) console.log(curr)
-                // console.log(curr.obj_catch.cellIdVecini)
             }
 
         }, {
@@ -93,7 +88,7 @@ let cacheData = {
                 let newCells = getCellsList(data);
                 if (compareArr(oldCells.GSM, newCells.GSM) && compareArr(oldCells.UMTS, newCells.UMTS) && compareArr(oldCells.LTE, newCells.LTE)) {
                     this.iteratii = this.iteratii + 1;
-                    console.log(this.iteratii)
+                    // console.log(this.iteratii)
                 } else
                     this.iteratii = 0;
             }
@@ -107,7 +102,7 @@ let cacheData = {
                     completed: true
                 }
             })
-            // fs.writeFileSync(CACHE.path, JSON.stringify(tempData));
+            fs.writeFileSync(CACHE.path, JSON.stringify(tempData));
             return this.recomandare = [...tempData];
         } catch (error) {
             console.log(error);

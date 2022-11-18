@@ -147,6 +147,7 @@ const getScore_GSM = (vecini = [], serving = {}) => {
         ...serving,
         lac: new_lac,
         cell_id: incrCellInfo(cell_vec, "cell_id"),
+        cellIdVecini: cell_vec ?? [],
         lac_list,
       };
     }
