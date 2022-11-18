@@ -88,7 +88,7 @@ const getAllRecomand = (dataGSM = [], dataUMTS = [], dataLTE = []) => {
             structura_obj.timestamp = UMTS[key].cell_info.timestamp;
             structura_obj.band_str = bands_3G[UMTS[key].cell_info.band];
             structura_obj.key = `${UMTS[key].cell_info.mcc}-${UMTS[key].cell_info.mnc}-UMTS-${UMTS[key].serving.uarfcn}`;
-            structura_obj.elasticID = `${UMTS[key].cell_info.mcc}-${UMTS[key].cell_info.mnc}-UMTS-${UMTS[key].serving.uarfcn}}`;
+            structura_obj.elasticID = `${UMTS[key].cell_info.mcc}-${UMTS[key].cell_info.mnc}-UMTS-${UMTS[key].serving.uarfcn}-${UMTS[key].scor[0].psc}`;
 
             sourceTab.push(structura_obj)
 
@@ -119,7 +119,7 @@ const getAllRecomand = (dataGSM = [], dataUMTS = [], dataLTE = []) => {
             structura_obj.timestamp = LTE[key].serving_cell.timestamp;
             structura_obj.band_str = bands_4G[LTE[key].serving_cell.band];
             structura_obj.key = `${LTE[key].serving_cell.mcc}-${LTE[key].serving_cell.mnc}-LTE-${LTE[key].serving_cell.earfcn}`;
-            structura_obj.elasticID = `${LTE[key].serving_cell.mcc}-${LTE[key].serving_cell.mnc}-LTE-${LTE[key].serving_cell.earfcn}`;
+            structura_obj.elasticID = `${LTE[key].serving_cell.mcc}-${LTE[key].serving_cell.mnc}-LTE-${LTE[key].serving_cell.earfcn}-${LTE[key].recomandare.scor_grupat[LTE[key].recomandare.ord_pci[0]][0].pci}`;
 
             sourceTab.push(structura_obj)
 

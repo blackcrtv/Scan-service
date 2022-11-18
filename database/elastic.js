@@ -168,7 +168,7 @@ const getTagTimestamp = async (index = ES.INDEX_ALL_SCAN) => {
                                 "order": {
                                     "_key": "desc"
                                 },
-                                "size": 2
+                                "size": 3
                             }
                         },
                         "timestamp": {
@@ -200,7 +200,7 @@ module.exports.getTagTimestamp = getTagTimestamp;
  * @param {string} date grater or equal than this date
  * @returns bucket format hits.hits
  */
-const getElasticDataWithTag = async (index = ES.INDEX_GSM, date = "2022-10-25T13:05:03.611Z", tag = [1, 0]) => {
+const getElasticDataWithTag = async (index = ES.INDEX_GSM, date = "2022-10-25T13:05:03.611Z", tag = [1, 0, 1]) => {
     try {
         let queryBody = {
             query: {
@@ -213,16 +213,17 @@ const getElasticDataWithTag = async (index = ES.INDEX_GSM, date = "2022-10-25T13
                                     lte: date
                                 }
                             }
-                        },
-                        {
-                            range: {
-                                "INTERVAL_TAG": {
-                                    gte: tag[1],
-                                    lte: tag[0]
-                                }
-                            }
                         }
-                    ]
+                        // ,
+                        // {
+                        //     range: {
+                        //         "INTERVAL_TAG": {
+                        //             gte: tag[1],
+                        //             lte: tag[0]
+                        //         }
+                        //     }
+                        // }
+                        ]
                 }
             },
             sort: [

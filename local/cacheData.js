@@ -50,11 +50,19 @@ const getCellsList = (data = []) => {
 
 }
 
-const compareArr = (arr1, arr2) => {
-    const array2Sorted = arr2.slice().sort();
-    return (arr1.length === arr2.length && arr1.slice().sort().every(function (value, index) {
-        return value === array2Sorted[index];
-    }));
+const compareRecomand = (oldRec, newRec) => {
+    if (oldRec.length !== newRec.length) return false;
+    return oldRec.every((rec) => {
+        let newElem = newRec.filter(el => el.elasticID = rec.elasticID);
+        if (!newElem.length) return false;
+        return true;
+    });
+}
+
+const compareArr = (oldArr, newArr) => {
+    const oldArrSorted = oldArr.slice().sort();
+    const newArrSorted = newArr.slice().sort();
+    return newArrSorted.every(cell => oldArrSorted.includes(cell));
 }
 
 let cacheData = {
@@ -84,25 +92,26 @@ let cacheData = {
                 });
                 tempData = [...lockedCells, ...filterData];
             } else if (this.recomandare.length) {
-                let oldCells = getCellsList(this.recomandare);
-                let newCells = getCellsList(data);
-                if (compareArr(oldCells.GSM, newCells.GSM) && compareArr(oldCells.UMTS, newCells.UMTS) && compareArr(oldCells.LTE, newCells.LTE)) {
+                if (compareRecomand(this.recomandare, data)) {
+                    tempData = [...this.recomandare]
                     this.iteratii = this.iteratii + 1;
-                    // console.log(this.iteratii)
-                } else
+                } else {
                     this.iteratii = 0;
+                }
             }
             tempData = tempData.map((cell) => {
-                if (this.iteratii < 3) return {
-                    ...cell,
-                    completed: false
+                if (this.iteratii < 3) {
+                    return {
+                        ...cell,
+                        completed: false
+                    }
                 }
                 return {
                     ...cell,
                     completed: true
                 }
             })
-            fs.writeFileSync(CACHE.path, JSON.stringify(tempData));
+            // fs.writeFileSync(CACHE.path, JSON.stringify(tempData));
             return this.recomandare = [...tempData];
         } catch (error) {
             console.log(error);
@@ -113,5 +122,20 @@ let cacheData = {
         return this.iteratii = 0;
     }
 }
+
+/**
+ *                 let oldCells = getCellsList(this.recomandare);
+                let newCells = getCellsList(data);
+                if (compareArr(oldCells.GSM, newCells.GSM) && compareArr(oldCells.UMTS, newCells.UMTS) && compareArr(oldCells.LTE, newCells.LTE)) {
+                    this.iteratii = this.iteratii + 1;
+                } else{
+                    console.log("--------------------TRUE----------------------------")
+                    console.log(oldCells)
+                    console.log("New")
+                    console.log(newCells)
+                    console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+                    this.iteratii = 0;
+                }
+ */
 
 module.exports = cacheData;
