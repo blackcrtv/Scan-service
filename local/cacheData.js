@@ -82,7 +82,7 @@ const compareRecomand = (oldRec, newRec) => {
             return false;
         }
         if (rec.tehnologie === "GSM") {
-            if (rec.obj_catch.scor !== oldElem[0].obj_catch.scor) {
+            if (rec.rec_ch !== oldElem[0].rec_ch) {
                 return false
             }
         } else if (rec.tehnologie === "UMTS") {
