@@ -3,7 +3,7 @@ const { getLastDateElastic, getTagTimestamp, getElasticDataWithTag, buildQuery, 
 const { ES, errorLogFile, logFile } = require('../../conf.json');
 const { insertLog, insertRecomandare } = require('../../Logs/Script/formatLogs');
 
-// let DUMMY = require('../../dummy.json')
+let DUMMY = require('../../dummy.json')
 
 let cacheData = require('../../local/cacheData');
 cacheData.getData();
@@ -160,11 +160,12 @@ const getNetworkEnv = async (req, res, next) => {
                 let dataUMTSFiltered = filterCatchActive(dataUMTS.hits.hits, umtsCatch ?? []);
                 let dataLTEFiltered = filterCatchActive(dataLTE.hits.hits, lteCatch ?? []);
                 sourceRecomand = getAllRecomand(dataGSMFiltered, dataUMTSFiltered, dataLTEFiltered);
+                // sourceRecomand = getAllRecomand(DUMMY_GSM, DUMMY_UMTS, DUMMY_LTE);
                 break;
         }
         cacheData.setData(sourceRecomand, lockedChannels ?? []);
         res.json({
-            "networkEnv": cacheData.recomandare
+            "networkEnv": [...cacheData.recomandare, ...cacheData.lockedRec]
         })
     } catch (error) {
         console.log(error)

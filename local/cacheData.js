@@ -49,12 +49,42 @@ const getCellsList = (data = []) => {
     }
 
 }
-
+/**
+ * Comparare recomandare stocata cu ultima generata.
+ * Criterii:
+ * -acelasi numar de recomandari;
+ * -sa existe cheia unica (mcc-mnc-TEHN-canal);
+ * -sa nu difere servingul;
+ * -pentru fiecare tehn se va alege un alt grup de criterii suplimentar:
+ *          *GSM: scor
+ *          *UMTS: psc
+ *          *LTE: pci
+ * @param {arr} oldRec 
+ * @param {arr} newRec 
+ * @returns {boolean}
+ */
 const compareRecomand = (oldRec, newRec) => {
     if (oldRec.length !== newRec.length) return false;
-    return oldRec.every((rec) => {
-        let newElem = newRec.filter(el => el.elasticID = rec.elasticID);
-        if (!newElem.length) return false;
+    return newRec.every((rec) => {
+        let oldElem = oldRec.filter(el => el.elasticID === rec.elasticID);
+        if (!oldElem.length) return false;
+        if (oldElem[0].serv_cell !== rec.serv_cell) {
+            return false;
+        }
+        if (rec.tehnologie === "GSM") {
+            if (rec.obj_catch.scor !== oldElem[0].obj_catch.scor) {
+                return false
+            }
+        } else if (rec.tehnologie === "UMTS") {
+            if (rec.obj_catch.psc !== oldElem[0].obj_catch.psc) {
+                return false
+            }
+
+        } else if (rec.tehnologie === "LTE") {
+            if (rec.obj_catch.pci !== oldElem[0].obj_catch.pci) {
+                return false
+            }
+        }
         return true;
     });
 }
@@ -68,6 +98,7 @@ const compareArr = (oldArr, newArr) => {
 let cacheData = {
     recomandare: [],
     iteratii: 0,
+    lockedRec: [],
     getData: function () {
         try {
             if (fs.existsSync(CACHE.path)) {
@@ -80,18 +111,14 @@ let cacheData = {
     setData: function (data, lockedChannels = []) {
         let tempData = [...data];
         try {
-            if (this.recomandare.length && lockedChannels.length) {
-                let lockedCells = this.recomandare.filter((cell) => {
+            if (this.recomandare.length) {
+                this.lockedRec = this.recomandare.filter((cell) => {
                     if (lockedChannels.includes(cell.elasticID)) {
                         cell.locked = true;
                         return cell;
                     }
                 });
-                let filterData = tempData.filter(cell => {
-                    if (!lockedChannels.includes(cell.elasticID)) return cell;
-                });
-                tempData = [...lockedCells, ...filterData];
-            } else if (this.recomandare.length) {
+                // console.log(compareRecomand(this.recomandare, data))
                 if (compareRecomand(this.recomandare, data)) {
                     tempData = [...this.recomandare]
                     this.iteratii = this.iteratii + 1;
@@ -100,6 +127,7 @@ let cacheData = {
                 }
             }
             tempData = tempData.map((cell) => {
+                if (!lockedChannels.includes(cell.elasticID)) cell.locked = false;
                 if (this.iteratii < 3) {
                     return {
                         ...cell,
@@ -110,7 +138,10 @@ let cacheData = {
                     ...cell,
                     completed: true
                 }
-            })
+            });
+            // console.log(filterData)
+            // finalData = [...tempData, ...lockedCells];
+            // console.log(finalData)
             // fs.writeFileSync(CACHE.path, JSON.stringify(tempData));
             return this.recomandare = [...tempData];
         } catch (error) {
