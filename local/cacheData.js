@@ -146,7 +146,7 @@ let cacheData = {
             tempData = tempData.filter((cell) => {
                 if (!lockedChannels.includes(cell.elasticID)) return cell;
             })
-            // fs.writeFileSync(CACHE.path, JSON.stringify(tempData));
+            fs.writeFileSync(CACHE.path, JSON.stringify(tempData));
             return this.recomandare = [...tempData];
         } catch (error) {
             console.log(error);

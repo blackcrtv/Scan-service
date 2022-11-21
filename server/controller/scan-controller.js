@@ -3,7 +3,7 @@ const { getLastDateElastic, getTagTimestamp, getElasticDataWithTag, buildQuery, 
 const { ES, errorLogFile, logFile } = require('../../conf.json');
 const { insertLog, insertRecomandare } = require('../../Logs/Script/formatLogs');
 
-let DUMMY = require('../../dummy.json')
+// let DUMMY = require('../../dummy.json')
 
 let cacheData = require('../../local/cacheData');
 cacheData.getData();
@@ -101,38 +101,38 @@ const getNetworkEnv = async (req, res, next) => {
     let bucketElastic = {};
     let filterElastic = [];
     let { gsmCatch, umtsCatch, lteCatch, lockedChannels } = req.body;
-    let DUMMY_GSM = DUMMY.filter(cell => cell._index === "index_scan_beta_2g")
-    let DUMMY_UMTS = DUMMY.filter(cell => cell._index === "index_scan_beta_3g")
-    let DUMMY_LTE = DUMMY.filter(cell => cell._index === "index_scan_beta_4g")
+    // let DUMMY_GSM = DUMMY.filter(cell => cell._index === "index_scan_beta_2g")
+    // let DUMMY_UMTS = DUMMY.filter(cell => cell._index === "index_scan_beta_3g")
+    // let DUMMY_LTE = DUMMY.filter(cell => cell._index === "index_scan_beta_4g")
     try {
-        // let lastDateBucket = await getLastDateElastic();
-        // if (!lastDateBucket) {
-        //     throw new Error('Eroare select timestamp din elasticsearch')
-        // }
-        // let aggData = await getTagTimestamp();
-        // if (!aggData) {
-        //     throw new Error('Eroare select timestamp/tag din elasticsearch')
-        // }
+        let lastDateBucket = await getLastDateElastic();
+        if (!lastDateBucket) {
+            throw new Error('Eroare select timestamp din elasticsearch')
+        }
+        let aggData = await getTagTimestamp();
+        if (!aggData) {
+            throw new Error('Eroare select timestamp/tag din elasticsearch')
+        }
 
-        // let structTehn = aggData.tehn.buckets?.reduce((acc, curr) => {
-        //     let mapper = {
-        //         [ES.INDEX_GSM]: "GSM",
-        //         [ES.INDEX_UMTS]: "UMTS",
-        //         [ES.INDEX_LTE]: "LTE"
-        //     }
+        let structTehn = aggData.tehn.buckets?.reduce((acc, curr) => {
+            let mapper = {
+                [ES.INDEX_GSM]: "GSM",
+                [ES.INDEX_UMTS]: "UMTS",
+                [ES.INDEX_LTE]: "LTE"
+            }
 
-        //     return acc = {
-        //         ...acc, [mapper[curr.key]]: {
-        //             timestamp: curr.timestamp.buckets[0].key_as_string,
-        //             tags: curr.tag.buckets.map(el => el.key)
-        //         }
-        //     }
+            return acc = {
+                ...acc, [mapper[curr.key]]: {
+                    timestamp: curr.timestamp.buckets[0].key_as_string,
+                    tags: curr.tag.buckets.map(el => el.key)
+                }
+            }
 
-        // }, {
-        //     "GSM": {},
-        //     "UMTS": {},
-        //     "LTE": {}
-        // });
+        }, {
+            "GSM": {},
+            "UMTS": {},
+            "LTE": {}
+        });
 
         switch (recTehn) {
             case "GSM":
@@ -152,14 +152,14 @@ const getNetworkEnv = async (req, res, next) => {
                 sourceRecomand = getAllRecomand([], [], filterElastic);
                 break;
             default:
-                // let dataGSM = await getElasticDataWithTag(ES.INDEX_GSM, structTehn["GSM"].timestamp, structTehn["GSM"].tags);
-                // let dataUMTS = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn["UMTS"].timestamp, structTehn["UMTS"].tags);
-                // let dataLTE = await getElasticDataWithTag(ES.INDEX_LTE, structTehn["LTE"].timestamp, structTehn["LTE"].tags);
-                // let dataGSMFiltered = filterCatchActive(dataGSM.hits.hits, gsmCatch ?? []);
-                // let dataUMTSFiltered = filterCatchActive(dataUMTS.hits.hits, umtsCatch ?? []);
-                // let dataLTEFiltered = filterCatchActive(dataLTE.hits.hits, lteCatch ?? []);
-                // sourceRecomand = getAllRecomand(dataGSMFiltered, dataUMTSFiltered, dataLTEFiltered);
-                sourceRecomand = getAllRecomand(DUMMY_GSM, DUMMY_UMTS, DUMMY_LTE);
+                let dataGSM = await getElasticDataWithTag(ES.INDEX_GSM, structTehn["GSM"].timestamp, structTehn["GSM"].tags);
+                let dataUMTS = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn["UMTS"].timestamp, structTehn["UMTS"].tags);
+                let dataLTE = await getElasticDataWithTag(ES.INDEX_LTE, structTehn["LTE"].timestamp, structTehn["LTE"].tags);
+                let dataGSMFiltered = filterCatchActive(dataGSM.hits.hits, gsmCatch ?? []);
+                let dataUMTSFiltered = filterCatchActive(dataUMTS.hits.hits, umtsCatch ?? []);
+                let dataLTEFiltered = filterCatchActive(dataLTE.hits.hits, lteCatch ?? []);
+                sourceRecomand = getAllRecomand(dataGSMFiltered, dataUMTSFiltered, dataLTEFiltered);
+                // sourceRecomand = getAllRecomand(DUMMY_GSM, DUMMY_UMTS, DUMMY_LTE);
                 break;
         }
         cacheData.setLockedCells(lockedChannels ?? []);
