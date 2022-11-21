@@ -12,6 +12,16 @@ const uniqueFromArray = (a = []) => {
     return a;
 };
 
+const uniqueArrayKey = (arr, key)=>{
+    let obj = arr.reduce((prev,curr)=>{
+        return prev = {
+            ...prev,
+            [curr[key]]: curr
+        }
+    },{});
+    return Object.keys(obj).map(el=> obj[el]);
+}
+
 const getCellsList = (data = []) => {
     try {
         return data.reduce((prev, curr) => {
@@ -110,9 +120,10 @@ let cacheData = {
     },
     setData: function (data, lockedChannels = []) {
         let tempData = [...data];
+        let tempLocked = [];
         try {
             if (this.recomandare.length) {
-                this.lockedRec = this.recomandare.filter((cell) => {
+                tempLocked = this.recomandare.filter((cell) => {
                     if (lockedChannels.includes(cell.elasticID)) {
                         cell.locked = true;
                         return cell;
@@ -139,10 +150,14 @@ let cacheData = {
                     completed: true
                 }
             });
+            tempData = tempData.filter((cell) => {
+                if (!lockedChannels.includes(cell.elasticID)) return cell;
+            })
             // console.log(filterData)
             // finalData = [...tempData, ...lockedCells];
             // console.log(finalData)
-            // fs.writeFileSync(CACHE.path, JSON.stringify(tempData));
+            fs.writeFileSync(CACHE.path, JSON.stringify(tempData));
+            this.lockedRec = uniqueArrayKey([...tempLocked, ...this.lockedRec], "elasticID");
             return this.recomandare = [...tempData];
         } catch (error) {
             console.log(error);
