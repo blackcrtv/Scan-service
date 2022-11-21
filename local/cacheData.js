@@ -12,14 +12,14 @@ const uniqueFromArray = (a = []) => {
     return a;
 };
 
-const uniqueArrayKey = (arr, key)=>{
-    let obj = arr.reduce((prev,curr)=>{
+const uniqueArrayKey = (arr, key) => {
+    let obj = arr.reduce((prev, curr) => {
         return prev = {
             ...prev,
             [curr[key]]: curr
         }
-    },{});
-    return Object.keys(obj).map(el=> obj[el]);
+    }, {});
+    return Object.keys(obj).map(el => obj[el]);
 }
 
 const getCellsList = (data = []) => {
@@ -120,15 +120,8 @@ let cacheData = {
     },
     setData: function (data, lockedChannels = []) {
         let tempData = [...data];
-        let tempLocked = [];
         try {
             if (this.recomandare.length) {
-                tempLocked = this.recomandare.filter((cell) => {
-                    if (lockedChannels.includes(cell.elasticID)) {
-                        cell.locked = true;
-                        return cell;
-                    }
-                });
                 // console.log(compareRecomand(this.recomandare, data))
                 if (compareRecomand(this.recomandare, data)) {
                     tempData = [...this.recomandare]
@@ -153,16 +146,29 @@ let cacheData = {
             tempData = tempData.filter((cell) => {
                 if (!lockedChannels.includes(cell.elasticID)) return cell;
             })
-            // console.log(filterData)
-            // finalData = [...tempData, ...lockedCells];
-            // console.log(finalData)
-            fs.writeFileSync(CACHE.path, JSON.stringify(tempData));
-            this.lockedRec = uniqueArrayKey([...tempLocked, ...this.lockedRec], "elasticID");
+            // fs.writeFileSync(CACHE.path, JSON.stringify(tempData));
             return this.recomandare = [...tempData];
         } catch (error) {
             console.log(error);
             return this.recomandare = [...data];
         }
+    },
+    setLockedCells: function (lockedChannels = []) {
+        if (lockedChannels.length === 0) return this.lockedRec = [];
+        let tempLocked = [];
+        tempLocked = this.recomandare.filter((cell) => {
+            if (lockedChannels.includes(cell.elasticID)) {
+                cell.locked = true;
+                return cell;
+            }
+        });
+        tempLocked = [...tempLocked, ...this.lockedRec].filter(cell => {
+            if (lockedChannels.includes(cell.elasticID)) {
+                cell.locked = true;
+                return cell;
+            }
+        })
+        return this.lockedRec = uniqueArrayKey([...tempLocked], "elasticID");
     },
     resetIteratii: function () {
         return this.iteratii = 0;
