@@ -166,7 +166,8 @@ const getNetworkEnv = async (req, res, next) => {
         cacheData.setData(sourceRecomand, lockedChannels ?? []);
         res.json({
             "networkEnv": [...cacheData.recomandare, ...cacheData.lockedRec],
-            "locked": cacheData.lockedRec
+            "locked": cacheData.lockedRec,
+            "iteratii": cacheData.iteratii
         })
     } catch (error) {
         console.log(error)
