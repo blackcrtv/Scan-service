@@ -121,9 +121,20 @@ let cacheData = {
     setData: function (data, lockedChannels = []) {
         let tempData = [...data];
         try {
+            tempData = tempData.filter((cell) => {
+                if (!lockedChannels.includes(cell.elasticID)) {
+                    cell.locked = false;
+                    return cell;
+                }
+            });
+            let oldRecFiltered = this.recomandare.filter((cell) => {
+                if (!lockedChannels.includes(cell.elasticID)) {
+                    cell.locked = false;
+                    return cell;
+                }
+            });
             if (this.recomandare.length) {
-                // console.log(compareRecomand(this.recomandare, data))
-                if (compareRecomand(this.recomandare, data)) {
+                if (compareRecomand(oldRecFiltered, tempData)) {
                     tempData = [...this.recomandare]
                     this.iteratii = this.iteratii + 1;
                 } else {
@@ -131,7 +142,7 @@ let cacheData = {
                 }
             }
             tempData = tempData.map((cell) => {
-                if (!lockedChannels.includes(cell.elasticID)) cell.locked = false;
+                // if (!lockedChannels.includes(cell.elasticID)) cell.locked = false;
                 if (this.iteratii < 3) {
                     return {
                         ...cell,
@@ -143,9 +154,7 @@ let cacheData = {
                     completed: true
                 }
             });
-            tempData = tempData.filter((cell) => {
-                if (!lockedChannels.includes(cell.elasticID)) return cell;
-            })
+
             fs.writeFileSync(CACHE.path, JSON.stringify(tempData));
             return this.recomandare = [...tempData];
         } catch (error) {

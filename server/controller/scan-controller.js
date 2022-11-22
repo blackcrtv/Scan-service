@@ -3,8 +3,6 @@ const { getLastDateElastic, getTagTimestamp, getElasticDataWithTag, buildQuery, 
 const { ES, errorLogFile, logFile } = require('../../conf.json');
 const { insertLog, insertRecomandare } = require('../../Logs/Script/formatLogs');
 
-// let DUMMY = require('../../dummy.json')
-
 let cacheData = require('../../local/cacheData');
 cacheData.getData();
 
@@ -179,6 +177,48 @@ const getNetworkEnv = async (req, res, next) => {
     }
 }
 
+const getNetworkEnvTesting = async (req, res, next) => {
+    const recTehn = req.params.recTehn;
+    let sourceRecomand = [];
+    let { gsmCatch, umtsCatch, lteCatch, lockedChannels } = req.body;
+    try {
+        let DUMMY = require('../../dummy.json')
+        let DUMMY_GSM = DUMMY.filter(cell => cell._index === "index_scan_beta_2g")
+        let DUMMY_UMTS = DUMMY.filter(cell => cell._index === "index_scan_beta_3g")
+        let DUMMY_LTE = DUMMY.filter(cell => cell._index === "index_scan_beta_4g")
+
+        switch (recTehn) {
+            case "GSM":
+                sourceRecomand = getAllRecomand(DUMMY_GSM);
+                break;
+            case "UMTS":
+                sourceRecomand = getAllRecomand([], DUMMY_UMTS, []);
+                break;
+            case "LTE":
+
+                sourceRecomand = getAllRecomand([], [], DUMMY_LTE);
+                break;
+            default:
+                sourceRecomand = getAllRecomand(DUMMY_GSM, DUMMY_UMTS, DUMMY_LTE);
+                break;
+        }
+        cacheData.setLockedCells(lockedChannels ?? []);
+        cacheData.setData(sourceRecomand, lockedChannels ?? []);
+        res.json({
+            "networkEnv": [...cacheData.recomandare, ...cacheData.lockedRec],
+            "locked": cacheData.lockedRec,
+            "iteratii": cacheData.iteratii
+        })
+    } catch (error) {
+        console.log(error)
+        insertLog(error, errorLogFile);
+        res.json({
+            "networkEnv": [],
+            error
+        })
+    }
+}
+
 const filterCatchActive = (data = [], catchList = []) => {
     try {
         if (!catchList.length) {
@@ -274,5 +314,6 @@ module.exports = {
     getScanData,
     getNetworkEnv,
     deleteScanCellid,
-    resetIteratii
+    resetIteratii,
+    getNetworkEnvTesting
 }
