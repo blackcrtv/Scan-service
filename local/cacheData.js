@@ -135,7 +135,7 @@ let cacheData = {
             });
             if (this.recomandare.length) {
                 if (compareRecomand(oldRecFiltered, tempData)) {
-                    tempData = [...this.recomandare]
+                    tempData = [...oldRecFiltered]
                     this.iteratii = this.iteratii + 1;
                 } else {
                     this.iteratii = 0;
