@@ -27,7 +27,8 @@
         "INDEX_UMTS": "index_scan_beta_3g",
         "INDEX_LTE": "index_scan_beta_4g",
         "INDEX_ALL_SCAN": "index_scan_beta*",
-        "RANGE_SCAN_QUERY": "3m"
+        "RANGE_SCAN_QUERY": "3m",
+        "RANGE_SCAN_QUERY_UMTS": "6m"
     },
     "MYSQL": {
         "host": "172.17.120.122",

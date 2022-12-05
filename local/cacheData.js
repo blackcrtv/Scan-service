@@ -107,7 +107,6 @@ const compareArr = (oldArr, newArr) => {
 
 let cacheData = {
     recomandare: [],
-    iteratii: 0,
     lockedRec: [],
     getData: function () {
         try {
@@ -118,7 +117,7 @@ let cacheData = {
             console.log(error)
         }
     },
-    setData: function (data, lockedChannels = []) {
+    setData: function (data, lockedChannels = [], statusRec) {
         let tempData = [...data];
         try {
             tempData = tempData.filter((cell) => {
@@ -136,22 +135,25 @@ let cacheData = {
             if (this.recomandare.length) {
                 if (compareRecomand(oldRecFiltered, tempData)) {
                     tempData = [...oldRecFiltered]
-                    this.iteratii = this.iteratii + 1;
-                } else {
-                    this.iteratii = 0;
+                    // this.iteratii = this.iteratii + 1;
                 }
             }
             tempData = tempData.map((cell) => {
-                // if (!lockedChannels.includes(cell.elasticID)) cell.locked = false;
-                if (this.iteratii < 3) {
+                if (statusRec.status && statusRec.status == -1) {
                     return {
                         ...cell,
                         completed: false
                     }
                 }
+                if (statusRec.status && statusRec.timeDif && statusRec.timeDif > 90) {
+                    return {
+                        ...cell,
+                        completed: true
+                    }
+                }
                 return {
                     ...cell,
-                    completed: true
+                    completed: false
                 }
             });
 
@@ -178,9 +180,6 @@ let cacheData = {
             }
         })
         return this.lockedRec = uniqueArrayKey([...tempLocked], "elasticID");
-    },
-    resetIteratii: function () {
-        return this.iteratii = 0;
     }
 }
 

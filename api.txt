@@ -10,6 +10,10 @@ POST: http://localhost:5000/api/network-env/<GSM> --param <ALL> returns all tehn
         umtsCatch:[], 
         lteCatch: [],
         lockedChannels: [] -- list of keys in catch format "226-01-GSM-990" <- mcc-mnc-TEHN-CHANNEL
+        statusRec: { //stare receptor
+            status: int,
+            timeDif: int 
+        }
     }
 
 DELETE: http://localhost:5000/api/delete-cellid -> sterge datele din scan care au cellid urile din body din ultima ora
@@ -19,4 +23,3 @@ DELETE: http://localhost:5000/api/delete-cellid -> sterge datele din scan care a
         lteCatch: []
     }
 
-GET: http://localhost:5000/api/reset-iteratii -> reset iteratii iterator

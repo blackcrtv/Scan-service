@@ -39,7 +39,7 @@ const getScanData = async (req, res, next) => {
             return acc = {
                 ...acc, [mapper[curr.key]]: {
                     timestamp: curr.timestamp.buckets[0].key_as_string,
-                    tags: curr.tag.buckets.map(el => el.key)
+                    rangeTimestamp: (mapper[curr.key] ==  "UMTS" ? ES.RANGE_SCAN_QUERY_UMTS : ES.RANGE_SCAN_QUERY)
                 }
             }
 
@@ -52,27 +52,27 @@ const getScanData = async (req, res, next) => {
 
         switch (ratScan) {
             case "GSM":
-                responseElastic = await getElasticDataWithTag(ES.INDEX_GSM, structTehn[ratScan].timestamp, structTehn[ratScan].tags);
+                responseElastic = await getElasticDataWithTag(ES.INDEX_GSM, structTehn[ratScan].timestamp, structTehn[ratScan].rangeTimestamp);
                 dataResponse = {
                     "GSM": filterCatchActive(responseElastic.hits.hits, gsmCatch)
                 }
                 break;
             case "UMTS":
-                responseElastic = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn[ratScan].timestamp, structTehn[ratScan].tags);
+                responseElastic = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn[ratScan].timestamp, structTehn[ratScan].rangeTimestamp);
                 dataResponse = {
                     "UMTS": filterCatchActive(responseElastic.hits.hits, umtsCatch ?? [])
                 }
                 break;
             case "LTE":
-                responseElastic = await getElasticDataWithTag(ES.INDEX_LTE, structTehn[ratScan].timestamp, structTehn[ratScan].tags);
+                responseElastic = await getElasticDataWithTag(ES.INDEX_LTE, structTehn[ratScan].timestamp, structTehn[ratScan].rangeTimestamp);
                 dataResponse = {
                     "LTE": filterCatchActive(responseElastic.hits.hits, lteCatch ?? [])
                 }
                 break;
             default:
-                let dataGSM = await getElasticDataWithTag(ES.INDEX_GSM, structTehn["GSM"].timestamp, structTehn["GSM"].tags);
-                let dataUMTS = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn["UMTS"].timestamp, structTehn["UMTS"].tags);
-                let dataLTE = await getElasticDataWithTag(ES.INDEX_LTE, structTehn["LTE"].timestamp, structTehn["LTE"].tags);
+                let dataGSM = await getElasticDataWithTag(ES.INDEX_GSM, structTehn["GSM"].timestamp, structTehn["GSM"].rangeTimestamp);
+                let dataUMTS = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn["UMTS"].timestamp, structTehn["UMTS"].rangeTimestamp);
+                let dataLTE = await getElasticDataWithTag(ES.INDEX_LTE, structTehn["LTE"].timestamp, structTehn["LTE"].rangeTimestamp);
                 dataResponse = {
                     "GSM": filterCatchActive(dataGSM.hits.hits),
                     "UMTS": filterCatchActive(dataUMTS.hits.hits),
@@ -98,10 +98,8 @@ const getNetworkEnv = async (req, res, next) => {
     let sourceRecomand = [];
     let bucketElastic = {};
     let filterElastic = [];
-    let { gsmCatch, umtsCatch, lteCatch, lockedChannels } = req.body;
-    // let DUMMY_GSM = DUMMY.filter(cell => cell._index === "index_scan_beta_2g")
-    // let DUMMY_UMTS = DUMMY.filter(cell => cell._index === "index_scan_beta_3g")
-    // let DUMMY_LTE = DUMMY.filter(cell => cell._index === "index_scan_beta_4g")
+    let { gsmCatch, umtsCatch, lteCatch, lockedChannels, statusRec } = req.body;
+
     try {
         let lastDateBucket = await getLastDateElastic();
         if (!lastDateBucket) {
@@ -122,7 +120,7 @@ const getNetworkEnv = async (req, res, next) => {
             return acc = {
                 ...acc, [mapper[curr.key]]: {
                     timestamp: curr.timestamp.buckets[0].key_as_string,
-                    tags: curr.tag.buckets.map(el => el.key)
+                    rangeTimestamp: (mapper[curr.key] ==  "UMTS" ? ES.RANGE_SCAN_QUERY_UMTS : ES.RANGE_SCAN_QUERY)
                 }
             }
 
@@ -134,25 +132,25 @@ const getNetworkEnv = async (req, res, next) => {
 
         switch (recTehn) {
             case "GSM":
-                bucketElastic = await getElasticDataWithTag(ES.INDEX_GSM, structTehn[recTehn].timestamp, structTehn[recTehn].tags);
+                bucketElastic = await getElasticDataWithTag(ES.INDEX_GSM, structTehn[recTehn].timestamp, structTehn[recTehn].rangeTimestamp);
                 filterElastic = filterCatchActive(bucketElastic.hits.hits, gsmCatch);
                 sourceRecomand = getAllRecomand(filterElastic);
                 break;
             case "UMTS":
-                bucketElastic = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn[recTehn].timestamp, structTehn[recTehn].tags);
+                bucketElastic = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn[recTehn].timestamp,structTehn[recTehn].rangeTimestamp);
                 filterElastic = filterCatchActive(bucketElastic.hits.hits, umtsCatch ?? []);
                 sourceRecomand = getAllRecomand([], filterElastic, []);
                 break;
             case "LTE":
-                bucketElastic = await getElasticDataWithTag(ES.INDEX_LTE, structTehn[recTehn].timestamp, structTehn[recTehn].tags);
+                bucketElastic = await getElasticDataWithTag(ES.INDEX_LTE, structTehn[recTehn].timestamp,structTehn[recTehn].rangeTimestamp);
                 filterElastic = filterCatchActive(bucketElastic.hits.hits, lteCatch ?? []);
 
                 sourceRecomand = getAllRecomand([], [], filterElastic);
                 break;
             default:
-                let dataGSM = await getElasticDataWithTag(ES.INDEX_GSM, structTehn["GSM"].timestamp, structTehn["GSM"].tags);
-                let dataUMTS = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn["UMTS"].timestamp, structTehn["UMTS"].tags);
-                let dataLTE = await getElasticDataWithTag(ES.INDEX_LTE, structTehn["LTE"].timestamp, structTehn["LTE"].tags);
+                let dataGSM = await getElasticDataWithTag(ES.INDEX_GSM, structTehn["GSM"].timestamp, structTehn["GSM"].rangeTimestamp);
+                let dataUMTS = await getElasticDataWithTag(ES.INDEX_UMTS, structTehn["UMTS"].timestamp, structTehn["UMTS"].rangeTimestamp);
+                let dataLTE = await getElasticDataWithTag(ES.INDEX_LTE, structTehn["LTE"].timestamp, structTehn["LTE"].rangeTimestamp);
                 let dataGSMFiltered = filterCatchActive(dataGSM.hits.hits, gsmCatch ?? []);
                 let dataUMTSFiltered = filterCatchActive(dataUMTS.hits.hits, umtsCatch ?? []);
                 let dataLTEFiltered = filterCatchActive(dataLTE.hits.hits, lteCatch ?? []);
@@ -161,11 +159,10 @@ const getNetworkEnv = async (req, res, next) => {
                 break;
         }
         cacheData.setLockedCells(lockedChannels ?? []);
-        cacheData.setData(sourceRecomand, lockedChannels ?? []);
+        cacheData.setData(sourceRecomand, lockedChannels ?? [], statusRec);
         res.json({
             "networkEnv": [...cacheData.recomandare, ...cacheData.lockedRec],
-            "locked": cacheData.lockedRec,
-            "iteratii": cacheData.iteratii
+            "locked": cacheData.lockedRec
         })
     } catch (error) {
         console.log(error)
@@ -180,7 +177,8 @@ const getNetworkEnv = async (req, res, next) => {
 const getNetworkEnvTesting = async (req, res, next) => {
     const recTehn = req.params.recTehn;
     let sourceRecomand = [];
-    let { gsmCatch, umtsCatch, lteCatch, lockedChannels } = req.body;
+    let { lockedChannels, statusRec } = req.body;
+
     try {
         let DUMMY = require('../../dummy.json')
         let DUMMY_GSM = DUMMY.filter(cell => cell._index === "index_scan_beta_2g")
@@ -195,7 +193,6 @@ const getNetworkEnvTesting = async (req, res, next) => {
                 sourceRecomand = getAllRecomand([], DUMMY_UMTS, []);
                 break;
             case "LTE":
-
                 sourceRecomand = getAllRecomand([], [], DUMMY_LTE);
                 break;
             default:
@@ -203,11 +200,10 @@ const getNetworkEnvTesting = async (req, res, next) => {
                 break;
         }
         cacheData.setLockedCells(lockedChannels ?? []);
-        cacheData.setData(sourceRecomand, lockedChannels ?? []);
+        cacheData.setData(sourceRecomand, lockedChannels ?? [], statusRec);
         res.json({
             "networkEnv": [...cacheData.recomandare, ...cacheData.lockedRec],
-            "locked": cacheData.lockedRec,
-            "iteratii": cacheData.iteratii
+            "locked": cacheData.lockedRec
         })
     } catch (error) {
         console.log(error)
@@ -296,24 +292,23 @@ const deleteScanCellid = async (req, res, next) => {
     }
 }
 
-const resetIteratii = async (req, res, next) => {
-    try {
-        cacheData.resetIteratii();
-        res.json({
-            "result": true
-        });
-    } catch (error) {
-        insertLog(error, errorLogFile);
-        res.json({
-            "error": error
-        });
-    }
-}
+// const resetIteratii = async (req, res, next) => {
+//     try {
+//         cacheData.resetIteratii();
+//         res.json({
+//             "result": true
+//         });
+//     } catch (error) {
+//         insertLog(error, errorLogFile);
+//         res.json({
+//             "error": error
+//         });
+//     }
+// }
 
 module.exports = {
     getScanData,
     getNetworkEnv,
     deleteScanCellid,
-    resetIteratii,
     getNetworkEnvTesting
 }

@@ -200,7 +200,7 @@ module.exports.getTagTimestamp = getTagTimestamp;
  * @param {string} date grater or equal than this date
  * @returns bucket format hits.hits
  */
-const getElasticDataWithTag = async (index = ES.INDEX_GSM, date = "2022-10-25T13:05:03.611Z", tag = [1, 0, 1]) => {
+const getElasticDataWithTag = async (index = ES.INDEX_GSM, date = "2022-10-25T13:05:03.611Z", rangeTimestamp) => {
     try {
         let queryBody = {
             query: {
@@ -209,20 +209,11 @@ const getElasticDataWithTag = async (index = ES.INDEX_GSM, date = "2022-10-25T13
                         {
                             range: {
                                 "timestampPrimit": {
-                                    gte: date + "||-3m",
+                                    gte: date + "||-" + rangeTimestamp,
                                     lte: date
                                 }
                             }
                         }
-                        // ,
-                        // {
-                        //     range: {
-                        //         "INTERVAL_TAG": {
-                        //             gte: tag[1],
-                        //             lte: tag[0]
-                        //         }
-                        //     }
-                        // }
                         ]
                 }
             },
@@ -232,6 +223,7 @@ const getElasticDataWithTag = async (index = ES.INDEX_GSM, date = "2022-10-25T13
                 }
             ], size: 10000
         };
+        console.log(JSON.stringify(queryBody))
         return await searchElastic(queryBody, index);
     } catch (error) {
         insertLog(error, errorLogFile);
