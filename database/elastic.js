@@ -223,7 +223,6 @@ const getElasticDataWithTag = async (index = ES.INDEX_GSM, date = "2022-10-25T13
                 }
             ], size: 10000
         };
-        console.log(JSON.stringify(queryBody))
         return await searchElastic(queryBody, index);
     } catch (error) {
         insertLog(error, errorLogFile);

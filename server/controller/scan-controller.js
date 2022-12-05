@@ -161,7 +161,11 @@ const getNetworkEnv = async (req, res, next) => {
         cacheData.setLockedCells(lockedChannels ?? []);
         cacheData.setData(sourceRecomand, lockedChannels ?? [], statusRec);
         res.json({
-            "networkEnv": [...cacheData.recomandare, ...cacheData.lockedRec],
+            "networkEnv": [...cacheData.recomandare, ...cacheData.lockedRec].sort((a,b)=>{
+                if(a.serv_cell > b.serv_cell) return 1;
+                if(a.serv_cell < b.serv_cell) return -1;
+                return 0;
+            }),
             "locked": cacheData.lockedRec
         })
     } catch (error) {

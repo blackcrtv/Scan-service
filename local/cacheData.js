@@ -1,6 +1,8 @@
 const fs = require('fs');
 const { CACHE } = require('../conf.json')
 
+const INTERVAL_SCAN = 120;
+
 const uniqueFromArray = (a = []) => {
     for (var i = 0; i < a.length; ++i) {
         for (var j = i + 1; j < a.length; ++j) {
@@ -89,7 +91,7 @@ const compareRecomand = (oldRec, newRec) => {
             if (rec.obj_catch.psc !== oldElem[0].obj_catch.psc) {
                 return false
             }
-
+            
         } else if (rec.tehnologie === "LTE") {
             if (rec.obj_catch.pci !== oldElem[0].obj_catch.pci) {
                 return false
@@ -134,8 +136,7 @@ let cacheData = {
             });
             if (this.recomandare.length) {
                 if (compareRecomand(oldRecFiltered, tempData)) {
-                    tempData = [...oldRecFiltered]
-                    // this.iteratii = this.iteratii + 1;
+                    tempData = [...oldRecFiltered];
                 }
             }
             tempData = tempData.map((cell) => {
@@ -145,7 +146,7 @@ let cacheData = {
                         completed: false
                     }
                 }
-                if (statusRec.status && statusRec.timeDif && statusRec.timeDif > 90) {
+                if (statusRec.status && statusRec.timeDif && statusRec.timeDif > INTERVAL_SCAN) {
                     return {
                         ...cell,
                         completed: true
