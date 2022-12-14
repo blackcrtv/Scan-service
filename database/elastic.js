@@ -162,15 +162,6 @@ const getTagTimestamp = async (index = ES.INDEX_ALL_SCAN) => {
                         "size": 3
                     },
                     "aggs": {
-                        "tag": {
-                            "terms": {
-                                "field": "INTERVAL_TAG",
-                                "order": {
-                                    "_key": "desc"
-                                },
-                                "size": 3
-                            }
-                        },
                         "timestamp": {
                             "terms": {
                                 "field": "timestampPrimit",
